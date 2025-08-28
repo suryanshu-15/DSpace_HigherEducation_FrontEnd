@@ -185,7 +185,10 @@ export class SubmissionFormComponent implements OnChanges, OnDestroy {
       // retrieve submission's section list
       this.submissionSections = this.submissionService.getSubmissionObject(this.submissionId).pipe(
         filter(() => this.isActive),
-        map((submission: SubmissionObjectEntry) => submission.isLoading),
+        map((submission: SubmissionObjectEntry) => {
+          console.log(submission?.sections?.traditionalpageone?.data)
+          return submission.isLoading
+        }),
         map((isLoading: boolean) => isLoading),
         distinctUntilChanged(),
         switchMap((isLoading: boolean) => {
@@ -308,7 +311,7 @@ export class SubmissionFormComponent implements OnChanges, OnDestroy {
     return this.submissionService.getSubmissionSections(this.submissionId).pipe(
       filter((sections: SectionDataObject[]) => isNotEmpty(sections)),
       map((sections: SectionDataObject[]) =>
-        sections.filter((section: SectionDataObject) => !isEqual(section.sectionType,SectionsType.Collection))),
+        sections.filter((section: SectionDataObject) => !isEqual(section.sectionType, SectionsType.Collection))),
     );
   }
 }

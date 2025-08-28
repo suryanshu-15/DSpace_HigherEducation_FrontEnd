@@ -24,3 +24,27 @@ import { ThemedSearchComponent } from '../shared/search/themed-search.component'
  */
 export class SearchPageComponent {
 }
+
+// import { Component } from '@angular/core';
+// import { SearchService } from '../services/search.service';
+
+// @Component({
+//   selector: 'app-search-page',
+//   templateUrl: './search-page.component.html',
+//   styleUrls: ['./search-page.component.scss']
+// })
+// export class SearchPageComponent {
+//   caseNumber: string = '';
+//   caseType: string = '';
+//   caseYear: string = '';
+//   results: any[] = [];
+
+//   constructor(private searchService: SearchService) {}
+
+//   searchCases() {
+//     this.searchService.searchCases(this.caseNumber, this.caseType, this.caseYear)
+//       .subscribe((response: any) => {
+//         this.results = response._embedded['searchResult']['objects'];
+//       });
+//   }
+// }

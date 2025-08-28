@@ -43,8 +43,12 @@ import { PROCESS_MODULE_PATH } from './process-page/process-page-routing.paths';
 import { viewTrackerResolver } from './statistics/angulartics/dspace/view-tracker.resolver';
 import { provideSubmissionState } from './submission/provide-submission-state';
 import { SUGGESTION_MODULE_PATH } from './suggestions-page/suggestions-page-routing-paths';
+import { SearchComponent } from './shared/search/search.component';
+import { SearchPageComponent } from './component/search-page.component';
+
 
 export const APP_ROUTES: Route[] = [
+
   { path: INTERNAL_SERVER_ERROR, component: ThemedPageInternalServerErrorComponent },
   { path: ERROR_PAGE, component: ThemedPageErrorComponent },
   {
@@ -52,13 +56,24 @@ export const APP_ROUTES: Route[] = [
     canActivate: [authBlockingGuard],
     canActivateChild: [ServerCheckGuard],
     children: [
-      { path: '', redirectTo: '/home', pathMatch: 'full' },
+
+      { path: '', redirectTo: '/login', pathMatch: 'full' },
+      {
+        path: 'browse/department',
+        component: SearchPageComponent
+      },
+
       {
         path: 'reload/:rnd',
         component: ThemedPageNotFoundComponent,
         pathMatch: 'full',
         canActivate: [reloadGuard],
       },
+      // {
+      //   path: "viewer",
+      //   loadChildren: () => import("./item-page/simple/field-components/viewer-routes").then((m) => m.ROUTES),
+      //   canActivate: [authenticatedGuard],
+      // },
       {
         path: 'home',
         loadChildren: () => import('./home-page/home-page-routes')
@@ -69,7 +84,7 @@ export const APP_ROUTES: Route[] = [
           dsoPath: 'site',
         },
         providers: [provideSuggestionNotificationsState()],
-        canActivate: [endUserAgreementCurrentUserGuard],
+        canActivate: [authenticatedGuard, endUserAgreementCurrentUserGuard],
         resolve: {
           site: homePageResolver,
           tracking: viewTrackerResolver,

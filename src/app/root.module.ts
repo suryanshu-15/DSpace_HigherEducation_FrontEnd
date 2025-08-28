@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
+import { FormsModule } from '@angular/forms'; 
+import { RouterModule } from '@angular/router';
+import { SearchPageModule } from './component/search-page.module';
 import { AdminSidebarComponent } from './admin/admin-sidebar/admin-sidebar.component';
 import { AdminSidebarSectionComponent } from './admin/admin-sidebar/admin-sidebar-section/admin-sidebar-section.component';
 import { ExpandableAdminSidebarSectionComponent } from './admin/admin-sidebar/expandable-admin-sidebar-section/expandable-admin-sidebar-section.component';
@@ -73,6 +75,9 @@ const EXPORTS = [
   imports: [
     ...IMPORTS,
     ...DECLARATIONS,
+    FormsModule,
+    RouterModule,
+    SearchPageModule
   ],
   providers: [
     ...PROVIDERS,

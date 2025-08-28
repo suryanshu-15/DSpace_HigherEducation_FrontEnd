@@ -3,10 +3,13 @@ import {
   KeyValuePipe,
   Location,
 } from '@angular/common';
+
+import { Bitstream } from 'src/app/core/shared/bitstream.model';
 import {
   ChangeDetectionStrategy,
   Component,
   Inject,
+  Input,
   OnDestroy,
   OnInit,
   PLATFORM_ID,
@@ -53,6 +56,7 @@ import { ThemedFullFileSectionComponent } from './field-components/file-section/
 /**
  * This component renders a full item page.
  * The route parameter 'id' is used to request the item it represents.
+ * 
  */
 
 @Component({
@@ -131,4 +135,18 @@ export class FullItemPageComponent extends ItemPageComponent implements OnInit, 
   ngOnDestroy() {
     this.subs.filter((sub) => hasValue(sub)).forEach((sub) => sub.unsubscribe());
   }
+
+  // @Input() bitstreams: Bitstream[];
+
+  // /**
+  //  * Open file metadata view for a bitstream
+  //  */
+  // viewFileWithMetadata(bitstream: Bitstream): void {
+  //   // Option 1: open in a new tab (simple)
+  //   window.open(`/bitstreams/${bitstream.uuid}/metadata`, '_blank');
+
+  //   // Option 2 (optional): show in a modal -> you would need a modal service here
+  // }
+
+
 }

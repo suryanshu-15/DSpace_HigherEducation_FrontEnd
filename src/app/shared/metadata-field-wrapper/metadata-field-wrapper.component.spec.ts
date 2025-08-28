@@ -29,6 +29,7 @@ class NoContentComponent {
   template: '<ds-metadata-field-wrapper [hideIfNoTextContent]="hideIfNoTextContent" [label]="\'test label\'">\n' +
         '    <span></span>\n' +
         '    <span></span>\n' +
+        '    <span></span>\n'+
         '</ds-metadata-field-wrapper>',
   standalone: true,
   imports: [

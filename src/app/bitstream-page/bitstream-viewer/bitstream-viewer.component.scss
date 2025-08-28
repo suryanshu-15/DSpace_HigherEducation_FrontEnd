@@ -1,0 +1,15 @@
+.viewer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+
+iframe {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+button {
+  margin-top: 10px;
+}

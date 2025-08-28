@@ -1,74 +1,80 @@
-<div class="row">
+<div class="row py-2 border-bottom">
   @if (showThumbnails) {
-    <div class="col-3 col-md-2">
+    <div class="col-3 col-md-2 d-flex align-items-start">
       @if (linkType !== linkTypes.None) {
-        <a [target]="(linkType === linkTypes.ExternalLink) ? '_blank' : '_self'" [attr.rel]="(linkType === linkTypes.ExternalLink) ? 'noopener noreferrer' : null"
-          [routerLink]="[itemPageRoute]" class="dont-break-out" tabindex="-1">
-          <ds-thumbnail [thumbnail]="dso?.thumbnail | async" [limitWidth]="true">
-          </ds-thumbnail>
+        <a [target]="(linkType === linkTypes.ExternalLink) ? '_blank' : '_self'"
+           [attr.rel]="(linkType === linkTypes.ExternalLink) ? 'noopener noreferrer' : null"
+           [routerLink]="[itemPageRoute, 'full']"
+           class="dont-break-out d-block p-1">
+          <!-- <ds-thumbnail [thumbnail]="dso?.thumbnail | async" [limitWidth]="true"> -->
+          <!-- </ds-thumbnail> -->
         </a>
       }
-      @if (linkType === linkTypes.None) {
-        <span class="dont-break-out">
-          <ds-thumbnail [thumbnail]="dso?.thumbnail | async" [limitWidth]="true">
-          </ds-thumbnail>
+      <!-- @if (linkType === linkTypes.None) {
+        <span class="dont-break-out d-block p-1">
+          <ds-thumbnail [thumbnail]="dso?.thumbnail | async" [limitWidth]="true"></ds-thumbnail>
         </span>
-      }
+      } -->
     </div>
   }
-  <div [ngClass]="showThumbnails ? 'col-9' : 'col-md-12'">
-    <div class="d-flex">
+
+  <div [ngClass]="showThumbnails ? 'col-9' : 'col-12'" class="ps-3">
+    <div class="d-flex align-items-center mb-1">
       @if (showLabel) {
         <ds-badges [object]="dso" [context]="context" [showAccessStatus]="true"></ds-badges>
       }
     </div>
 
     @if (object !== undefined && object !== null) {
-      <ds-truncatable [id]="dso.id">
+      <ds-truncatable [id]="dso.id" class="d-block">
         @if (linkType !== linkTypes.None) {
-          <a [target]="(linkType === linkTypes.ExternalLink) ? '_blank' : '_self'" [attr.rel]="(linkType === linkTypes.ExternalLink) ? 'noopener noreferrer' : null"
-            [routerLink]="[itemPageRoute]" class="lead item-list-title dont-break-out"
-          [innerHTML]="dsoTitle" role="link" tabindex="0"></a>
+          <a [target]="(linkType === linkTypes.ExternalLink) ? '_blank' : '_self'"
+             [attr.rel]="(linkType === linkTypes.ExternalLink) ? 'noopener noreferrer' : null"
+             [routerLink]="[itemPageRoute, 'full']"
+             class="lead item-list-title dont-break-out fw-semibold mb-1 d-inline-block"
+             [innerHTML]="dsoTitle"
+             role="link"></a>
         }
         @if (linkType === linkTypes.None) {
-          <span class="lead item-list-title dont-break-out"
-          [innerHTML]="dsoTitle"></span>
+          <span class="lead item-list-title dont-break-out fw-semibold mb-1 d-inline-block"
+                [innerHTML]="dsoTitle"></span>
         }
-        <span class="text-muted">
+
+        <span class="text-muted small d-block mb-1">
           <ds-truncatable-part [id]="dso.id" [minLines]="1">
             @if (dso.firstMetadataValue('dc.publisher') || dso.firstMetadataValue('dc.date.issued')) {
               (@if (dso.firstMetadataValue('dc.publisher')) {
-              <span class="item-list-publisher" [innerHTML]="firstMetadataValue('dc.publisher')"></span>
-            }
-            @if (dso.firstMetadataValue('dc.publisher') && dso.firstMetadataValue('dc.date.issued')) {
-              <span>, </span>
-            }
-            @if (dso.firstMetadataValue('dc.date.issued')) {
-              <span class="item-list-date" [innerHTML]="firstMetadataValue('dc.date.issued')"></span>
+                <span class="item-list-publisher" [innerHTML]="firstMetadataValue('dc.publisher')"></span>
+              }
+              @if (dso.firstMetadataValue('dc.publisher') && dso.firstMetadataValue('dc.date.issued')) {
+                <span>, </span>
+              }
+              @if (dso.firstMetadataValue('dc.date.issued')) {
+                <span class="item-list-date" [innerHTML]="firstMetadataValue('dc.date.issued')"></span>
               })
             }
+
             @if (dso.allMetadata(['dc.contributor.author', 'dc.creator', 'dc.contributor.*']).length > 0) {
-              <span class="item-list-authors">
+              <span class="item-list-authors ms-1">
                 @for (author of allMetadataValues(['dc.contributor.author', 'dc.creator', 'dc.contributor.*']); track author; let last = $last) {
                   <span>
-                    <span [innerHTML]="author"><span [innerHTML]="author"></span></span>
-                    @if (!last) {
-                      <span>; </span>
-                    }
+                    <span [innerHTML]="author"></span>
+                    @if (!last) { <span>; </span> }
                   </span>
                 }
               </span>
             }
           </ds-truncatable-part>
         </span>
+
         @if (dso.firstMetadataValue('dc.description.abstract')) {
-          <div class="item-list-abstract">
-            <ds-truncatable-part [id]="dso.id" [minLines]="3"><span
-            [innerHTML]="firstMetadataValue('dc.description.abstract')"></span>
-          </ds-truncatable-part>
-        </div>
-      }
-    </ds-truncatable>
-  }
-</div>
+          <div class="item-list-abstract mt-2">
+            <ds-truncatable-part [id]="dso.id" [minLines]="3">
+              <span [innerHTML]="firstMetadataValue('dc.description.abstract')"></span>
+            </ds-truncatable-part>
+          </div>
+        }
+      </ds-truncatable>
+    }
+  </div>
 </div>

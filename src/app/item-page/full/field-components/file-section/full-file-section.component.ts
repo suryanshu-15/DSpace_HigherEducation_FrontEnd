@@ -6,6 +6,8 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
+import { Router } from '@angular/router';
+
 import {
   TranslateModule,
   TranslateService,
@@ -41,6 +43,7 @@ import { followLink } from '../../../../shared/utils/follow-link-config.model';
 import { VarDirective } from '../../../../shared/utils/var.directive';
 import { ThemedThumbnailComponent } from '../../../../thumbnail/themed-thumbnail.component';
 import { FileSectionComponent } from '../../../simple/field-components/file-section/file-section.component';
+import { FileViewComponent } from 'src/app/shared/file-view/file-view.component';
 
 /**
  * This component renders the file section of the item
@@ -60,6 +63,7 @@ import { FileSectionComponent } from '../../../simple/field-components/file-sect
     ThemedThumbnailComponent,
     TranslateModule,
     VarDirective,
+    FileViewComponent
   ],
   standalone: true,
 })
@@ -90,6 +94,7 @@ export class FullFileSectionComponent extends FileSectionComponent implements On
     protected translateService: TranslateService,
     protected paginationService: PaginationService,
     public dsoNameService: DSONameService,
+    public router: Router,
     @Inject(APP_CONFIG) protected appConfig: AppConfig,
   ) {
     super(bitstreamDataService, notificationsService, translateService, dsoNameService, appConfig);
@@ -147,6 +152,13 @@ export class FullFileSectionComponent extends FileSectionComponent implements On
   ngOnDestroy(): void {
     this.paginationService.clearPagination(this.originalOptions.id);
     this.paginationService.clearPagination(this.licenseOptions.id);
+  }
+  
+  onViewFile(file: any) {
+    // You can open your custom PDF viewer component / modal here
+    console.log("Viewing file:", file);
+    // Example: navigate to a viewer page
+    this.router.navigate(['/viewer', file.uuid]);
   }
 
 }

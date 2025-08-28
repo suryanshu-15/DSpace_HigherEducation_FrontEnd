@@ -13,6 +13,7 @@ import { bitstreamPageResolver } from './bitstream-page.resolver';
 import { bitstreamPageAuthorizationsGuard } from './bitstream-page-authorizations.guard';
 import { ThemedEditBitstreamPageComponent } from './edit-bitstream-page/themed-edit-bitstream-page.component';
 import { legacyBitstreamURLRedirectGuard } from './legacy-bitstream-url-redirect.guard';
+import { BitstreamViewerComponent } from './bitstream-viewer/bitstream-viewer.component';
 
 const EDIT_BITSTREAM_PATH = ':id/edit';
 const EDIT_BITSTREAM_AUTHORIZATIONS_PATH = ':id/authorizations';
@@ -37,6 +38,14 @@ export const ROUTES: Route[] = [
     // Resolve angular bitstream download URLs
     path: ':id/download',
     component: BitstreamDownloadPageComponent,
+    resolve: {
+      bitstream: bitstreamPageResolver,
+    },
+  },
+  {
+    // ✅ New route for viewing a bitstream inline
+    path: ':id/view',
+    component: BitstreamViewerComponent,
     resolve: {
       bitstream: bitstreamPageResolver,
     },

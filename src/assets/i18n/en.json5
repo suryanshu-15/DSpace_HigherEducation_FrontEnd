@@ -31,7 +31,7 @@
 
   "error-page.description.404": "Page not found",
 
-  "error-page.orcid.generic-error": "An error occurred during login via ORCID. Make sure you have shared your ORCID account email address with DSpace. If the error persists, contact the administrator",
+  "error-page.orcid.generic-error": "An error occurred during login via ORCID. Make sure you have shared your ORCID account email address with Education System. If the error persists, contact the administrator",
 
   "listelement.badge.access-status": "Access status:",
 
@@ -151,7 +151,7 @@
 
   "admin.registries.metadata.breadcrumbs": "Metadata registry",
 
-  "admin.registries.metadata.description": "The metadata registry maintains a list of all metadata fields available in the repository. These fields may be divided amongst multiple schemas. However, DSpace requires the qualified Dublin Core schema.",
+  "admin.registries.metadata.description": "The metadata registry maintains a list of all metadata fields available in the repository. These fields may be divided amongst multiple schemas. However, Education System requires the qualified Dublin Core schema.",
 
   "admin.registries.metadata.form.create": "Create metadata schema",
 
@@ -1025,7 +1025,7 @@
 
   "browse.comcol.by.subject": "By Subject",
 
-  "browse.comcol.by.srsc": "By Subject Category",
+  "browse.comcol.by.srsc": " ",
 
   "browse.comcol.by.nsi": "By Norwegian Science Index",
 
@@ -1034,6 +1034,12 @@
   "browse.comcol.head": "Browse",
 
   "browse.empty": "No items to show.",
+
+  "browse.metadata.department": "Department",
+
+  "browse.metadata.section": "Section",
+
+  "browse.metadata.filenumber": "File Number",
 
   "browse.metadata.author": "Author",
 
@@ -1773,11 +1779,11 @@
 
   "dso-selector.error.title": "An error occurred searching for a {{ type }}",
 
-  "dso-selector.export-metadata.dspaceobject.head": "Export metadata from",
+  "dso-selector.export-metadata.Education Systemobject.head": "Export metadata from",
 
-  "dso-selector.export-batch.dspaceobject.head": "Export Batch (ZIP) from",
+  "dso-selector.export-batch.Education Systemobject.head": "Export Batch (ZIP) from",
 
-  "dso-selector.import-batch.dspaceobject.head": "Import batch from",
+  "dso-selector.import-batch.Education Systemobject.head": "Import batch from",
 
   "dso-selector.no-results": "No {{ type }} found",
 
@@ -1793,7 +1799,7 @@
 
   "dso-selector.set-scope.community.head": "Select a search scope",
 
-  "dso-selector.set-scope.community.button": "Search all of DSpace",
+  "dso-selector.set-scope.community.button": "Search all of Education System",
 
   "dso-selector.set-scope.community.or-divider": "or",
 
@@ -1965,7 +1971,7 @@
 
   "footer.link.accessibility": "Accessibility settings",
 
-  "footer.link.dspace": "DSpace software",
+  "footer.link.dspace": "Anthem Global Technology Service Pvt. Ltd",
 
   "footer.link.lyrasis": "LYRASIS",
 
@@ -2209,7 +2215,7 @@
 
   "home.title": "Home",
 
-  "home.top-level-communities.head": "Communities in DSpace",
+  "home.top-level-communities.head": "Communities in Education System",
 
   "home.top-level-communities.help": "Select a community to browse its collections.",
 
@@ -2281,7 +2287,7 @@
 
   "info.feedback.title": "Feedback",
 
-  "info.feedback.info": "Thanks for sharing your feedback about the DSpace system. Your comments are appreciated!",
+  "info.feedback.info": "Thanks for sharing your feedback about the Education System system. Your comments are appreciated!",
 
   "info.feedback.email_help": "This address will be used to follow up on your feedback.",
 
@@ -2695,7 +2701,7 @@
 
   "item.edit.relationships.save-button": "Save",
 
-  "item.edit.relationships.no-entity-type": "Add 'dspace.entity.type' metadata to enable relationships for this item",
+  "item.edit.relationships.no-entity-type": "Add 'Education System.entity.type' metadata to enable relationships for this item",
 
   "item.edit.return": "Back",
 
@@ -2849,9 +2855,9 @@
 
   "item.qa-event-notification-info.check.button": "View",
 
-  "mydspace.qa-event-notification.check.notification-info": "There are {{num}} pending suggestions related to your account",
+  "myEducation System.qa-event-notification.check.notification-info": "There are {{num}} pending suggestions related to your account",
 
-  "mydspace.qa-event-notification-info.check.button": "View",
+  "myEducation System.qa-event-notification-info.check.button": "View",
 
   "workflow-item.search.result.delete-supervision.modal.header": "Delete Supervision Order",
 
@@ -3061,7 +3067,7 @@
 
   "item.preview.organization.legalName": "Legal Name",
 
-  "item.preview.dspace.entity.type": "Entity Type:",
+  "item.preview.Education System.entity.type": "Entity Type:",
 
   "item.preview.creativework.publisher": "Publisher",
 
@@ -3377,7 +3383,7 @@
 
   "loading.items": "Loading items...",
 
-  "loading.mydspace-results": "Loading items...",
+  "loading.myEducation System-results": "Loading items...",
 
   "loading.objects": "Loading...",
 
@@ -3395,7 +3401,7 @@
 
   "login.form.forgot-password": "Have you forgotten your password?",
 
-  "login.form.header": "Please log in to DSpace",
+  "login.form.header": "Please log in to Education System",
 
   "login.form.new-user": "New user? Click here to register.",
 
@@ -3415,7 +3421,7 @@
 
   "login.breadcrumbs": "Login",
 
-  "logout.form.header": "Log out from DSpace",
+  "logout.form.header": "Log out from Education System",
 
   "logout.form.submit": "Log out",
 
@@ -3423,7 +3429,7 @@
 
   "menu.header.nav.description": "Admin navigation bar",
 
-  "menu.header.admin": "Management",
+  "menu.header.admin": "Higher Education",
 
   "menu.header.image.logo": "Repository logo",
 
@@ -3455,15 +3461,43 @@
 
   "menu.section.browse_community_by_title": "By Title",
 
-  "menu.section.browse_global": "All of DSpace",
+  "menu.section.browse_global_by_department": "By Department",
+
+  "menu.section.browse_global_by_section": "By Section",
+
+  "menu.section.browse_global_by_filenumber": "By File Number",
+
+  "browse.comcol.by.department": "By Department",
+
+  "browse.comcol.by.section": "By Section",
+
+  "browse.comcol.by.filenumber": "By File Number",
+
+  "browse.comcol.by.respondent": "By Respondent",
+
+  "browse.comcol.by.casenumber": "By Case Number",
+
+
+  "menu.section.browse_global": "All of Education System",
 
   "menu.section.browse_global_by_author": "By Author",
+
+  "menu.section.browse_global_by_dc_section": "By Section Name",
+
+  "menu.section.browse_global_by_dc_filenumber": "By File Number",
+  
+  "menu.section.browse_global_by_dc_department":"By Department Name",
+
+  "menu.section.browse_global_by_filename":"By File Name",
+  "menu.section.browse_global_by_casenumber":"By Case Number",
+  "menu.section.browse_global_by_respondent":"By Respondent Name",
+  "menu.section.browse_global_by_complient":"By Complient Name",
 
   "menu.section.browse_global_by_dateissued": "By Issue Date",
 
   "menu.section.browse_global_by_subject": "By Subject",
 
-  "menu.section.browse_global_by_srsc": "By Subject Category",
+  "menu.section.browse_global_by_srsc": "",
 
   "menu.section.browse_global_by_nsi": "By Norwegian Science Index",
 
@@ -3597,91 +3631,91 @@
 
   "metadata-export-search.submit.error": "Starting the export has failed",
 
-  "mydspace.breadcrumbs": "MyDSpace",
+  "myEducation System.breadcrumbs": "MyEducation System",
 
-  "mydspace.description": "",
+  "myEducation System.description": "",
 
-  "mydspace.messages.controller-help": "Select this option to send a message to item's submitter.",
+  "myEducation System.messages.controller-help": "Select this option to send a message to item's submitter.",
 
-  "mydspace.messages.description-placeholder": "Insert your message here...",
+  "myEducation System.messages.description-placeholder": "Insert your message here...",
 
-  "mydspace.messages.hide-msg": "Hide message",
+  "myEducation System.messages.hide-msg": "Hide message",
 
-  "mydspace.messages.mark-as-read": "Mark as read",
+  "myEducation System.messages.mark-as-read": "Mark as read",
 
-  "mydspace.messages.mark-as-unread": "Mark as unread",
+  "myEducation System.messages.mark-as-unread": "Mark as unread",
 
-  "mydspace.messages.no-content": "No content.",
+  "myEducation System.messages.no-content": "No content.",
 
-  "mydspace.messages.no-messages": "No messages yet.",
+  "myEducation System.messages.no-messages": "No messages yet.",
 
-  "mydspace.messages.send-btn": "Send",
+  "myEducation System.messages.send-btn": "Send",
 
-  "mydspace.messages.show-msg": "Show message",
+  "myEducation System.messages.show-msg": "Show message",
 
-  "mydspace.messages.subject-placeholder": "Subject...",
+  "myEducation System.messages.subject-placeholder": "Subject...",
 
-  "mydspace.messages.submitter-help": "Select this option to send a message to controller.",
+  "myEducation System.messages.submitter-help": "Select this option to send a message to controller.",
 
-  "mydspace.messages.title": "Messages",
+  "myEducation System.messages.title": "Messages",
 
-  "mydspace.messages.to": "To",
+  "myEducation System.messages.to": "To",
 
-  "mydspace.new-submission": "New submission",
+  "myEducation System.new-submission": "New submission",
 
-  "mydspace.new-submission-external": "Import metadata from external source",
+  "myEducation System.new-submission-external": "Import metadata from external source",
 
-  "mydspace.new-submission-external-short": "Import metadata",
+  "myEducation System.new-submission-external-short": "Import metadata",
 
-  "mydspace.results.head": "Your submissions",
+  "myEducation System.results.head": "Your submissions",
 
-  "mydspace.results.no-abstract": "No Abstract",
+  "myEducation System.results.no-abstract": "No Abstract",
 
-  "mydspace.results.no-authors": "No Authors",
+  "myEducation System.results.no-authors": "No Authors",
 
-  "mydspace.results.no-collections": "No Collections",
+  "myEducation System.results.no-collections": "No Collections",
 
-  "mydspace.results.no-date": "No Date",
+  "myEducation System.results.no-date": "No Date",
 
-  "mydspace.results.no-files": "No Files",
+  "myEducation System.results.no-files": "No Files",
 
-  "mydspace.results.no-results": "There were no items to show",
+  "myEducation System.results.no-results": "There were no items to show",
 
-  "mydspace.results.no-title": "No title",
+  "myEducation System.results.no-title": "No title",
 
-  "mydspace.results.no-uri": "No URI",
+  "myEducation System.results.no-uri": "No URI",
 
-  "mydspace.search-form.placeholder": "Search in MyDSpace...",
+  "myEducation System.search-form.placeholder": "Search in MyEducation System...",
 
-  "mydspace.show.workflow": "Workflow tasks",
+  "myEducation System.show.workflow": "Workflow tasks",
 
-  "mydspace.show.workspace": "Your submissions",
+  "myEducation System.show.workspace": "Your submissions",
 
-  "mydspace.show.supervisedWorkspace": "Supervised items",
+  "myEducation System.show.supervisedWorkspace": "Supervised items",
 
-  "mydspace.status": "My DSpace status:",
+  "myEducation System.status": "My Education System status:",
 
-  "mydspace.status.mydspaceArchived": "Archived",
+  "myEducation System.status.myEducation SystemArchived": "Archived",
 
-  "mydspace.status.mydspaceValidation": "Validation",
+  "myEducation System.status.myEducation SystemValidation": "Validation",
 
-  "mydspace.status.mydspaceWaitingController": "Waiting for reviewer",
+  "myEducation System.status.myEducation SystemWaitingController": "Waiting for reviewer",
 
-  "mydspace.status.mydspaceWorkflow": "Workflow",
+  "myEducation System.status.myEducation SystemWorkflow": "Workflow",
 
-  "mydspace.status.mydspaceWorkspace": "Workspace",
+  "myEducation System.status.myEducation SystemWorkspace": "Workspace",
 
-  "mydspace.title": "MyDSpace",
+  "myEducation System.title": "MyEducation System",
 
-  "mydspace.upload.upload-failed": "Error creating new workspace. Please verify the content uploaded before retry.",
+  "myEducation System.upload.upload-failed": "Error creating new workspace. Please verify the content uploaded before retry.",
 
-  "mydspace.upload.upload-failed-manyentries": "Unprocessable file. Detected too many entries but allowed only one for file.",
+  "myEducation System.upload.upload-failed-manyentries": "Unprocessable file. Detected too many entries but allowed only one for file.",
 
-  "mydspace.upload.upload-failed-moreonefile": "Unprocessable request. Only one file is allowed.",
+  "myEducation System.upload.upload-failed-moreonefile": "Unprocessable request. Only one file is allowed.",
 
-  "mydspace.upload.upload-multiple-successful": "{{qty}} new workspace items created.",
+  "myEducation System.upload.upload-multiple-successful": "{{qty}} new workspace items created.",
 
-  "mydspace.view-btn": "View",
+  "myEducation System.view-btn": "View",
 
   "nav.expandable-navbar-section-suffix": "(submenu)",
 
@@ -3691,7 +3725,7 @@
 
   "notification.suggestion.please": "Please",
 
-  "nav.browse.header": "All of DSpace",
+  "nav.browse.header": "All of Education System",
 
   "nav.community-browse.header": "By Community",
 
@@ -3707,7 +3741,7 @@
 
   "nav.main.description": "Main navigation bar",
 
-  "nav.mydspace": "MyDSpace",
+  "nav.myEducation System": "MyEducation System",
 
   "nav.profile": "Profile",
 
@@ -3835,7 +3869,7 @@
 
   "quality-assurance.event.reject.description": "This operation can't be undone. Reject this suggestion?",
 
-  "quality-assurance.event.accept.description": "No DSpace project selected. A new project will be created based on the suggestion data.",
+  "quality-assurance.event.accept.description": "No Education System project selected. A new project will be created based on the suggestion data.",
 
   "quality-assurance.event.action.cancel": "Cancel",
 
@@ -4331,7 +4365,7 @@
 
   "register-page.registration.header": "New user registration",
 
-  "register-page.registration.info": "Register an account to subscribe to collections for email updates, and submit new items to DSpace.",
+  "register-page.registration.info": "Register an account to subscribe to collections for email updates, and submit new items to Education System.",
 
   "register-page.registration.email": "Email Address *",
 
@@ -4429,9 +4463,9 @@
 
   "repository.image.logo": "Repository logo",
 
-  "repository.title": "DSpace Repository",
+  "repository.title": "Odisha Education Department",
 
-  "repository.title.prefix": "DSpace Repository :: ",
+  "repository.title.prefix": "Education Department:: ",
 
   "resource-policies.add.button": "Add",
 
@@ -4870,9 +4904,9 @@
 
   "search.form.search": "Search",
 
-  "search.form.search_dspace": "All repository",
+  "search.form.search_Education System": "All repository",
 
-  "search.form.scope.all": "All of DSpace",
+  "search.form.scope.all": "All of Education System",
 
   "search.results.head": "Search Results",
 
@@ -5038,9 +5072,9 @@
 
   "submission.import-external.title.none": "Import metadata from an external source",
 
-  "submission.import-external.page.hint": "Enter a query above to find items from the web to import in to DSpace.",
+  "submission.import-external.page.hint": "Enter a query above to find items from the web to import in to Education System.",
 
-  "submission.import-external.back-to-my-dspace": "Back to MyDSpace",
+  "submission.import-external.back-to-my-Education System": "Back to MyEducation System",
 
   "submission.import-external.search.placeholder": "Search the external source",
 
@@ -5914,7 +5948,7 @@
 
   "thumbnail.person.placeholder": "No Profile Picture Available",
 
-  "title": "DSpace",
+  "title": "Education System",
 
   "vocabulary-treeview.header": "Hierarchical tree view",
 
@@ -7207,4 +7241,41 @@
   "metadata-export-search.submit.error.limit-exceeded": "Only the first {{limit}} items will be exported",
 
   "file-download-link.request-copy": "Request a copy of ",
+
+  "item.page.field.dc.casenumber": "Case Number",
+  "item.page.field.dc.relation.ispartof": "Case Number",
+
+  "item.page.field.dc.complient": "Complient",
+
+  "item.page.field.dc.date.issued": "File Year",
+
+  "item.page.field.dc.filename": "File Name",
+  "item.page.field.dc.publisher": "File Name",  
+
+  "item.page.field.dc.respondent": "Respondent",
+  "item.page.field.dc.identifier.citation": "Respondent",
+
+  "item.page.field.dc.title.alternative": "File Number",
+
+  "item.page.field.dc.contributor.author": "Department",
+
+  "item.page.field.dc.title": "Section",
+
+  "item.page.field.dc.date.accessioned": "File Creation Date",
+
+  "browse.metadata.section.breadcrumbs": "By Section",
+  "browse.metadata.respondent": "By Respondent",
+  "browse.metadata.casenumber": "By Case Number",
+
+  "browse.metadata.department.breadcrumbs": "By Department",
+
+  "browse.metadata.filenumber.breadcrumbs": "By File Number",
+  "browse.metadata.filename.breadcrumbs": "By File Name",
+  "browse.metadata.respondent.breadcrumbs": "By Respondent",
+  "browse.metadata.casenumber.breadcrumbs": "By Case Number",
+  "browse.metadata.complient.breadcrumbs": "By Complient",
+
+  "item.page.field.dc.description.provenance": "Submission Description",
+  "item.page.filesection.view": "View PDF",
+
 }

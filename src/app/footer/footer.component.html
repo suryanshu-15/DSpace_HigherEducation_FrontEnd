@@ -53,12 +53,12 @@
     <div class="content-container align-self-center">
       <p class="m-0">
         <a class="text-white"
-        href="http://www.dspace.org/" role="link" tabindex="0">{{ 'footer.link.dspace' | translate}}</a>
+        href="http://www.anthemgt.com/" role="link" tabindex="0" target="_blank">{{ 'footer.link.dspace' | translate}}</a>
         {{ 'footer.copyright' | translate:{year: dateObj | date:'y'} }}
-        <a class="text-white"
-        href="https://www.lyrasis.org/" role="link" tabindex="0">{{ 'footer.link.lyrasis' | translate}}</a>
+        <!-- <a class="text-white"
+        href="https://www.lyrasis.org/" role="link" tabindex="0">{{ 'footer.link.lyrasis' | translate}}</a> -->
       </p>
-      <ul class="footer-info list-unstyled d-flex justify-content-center mb-0">
+      <!-- <ul class="footer-info list-unstyled d-flex justify-content-center mb-0">
         @if (showCookieSettings) {
         <li>
           <button class="btn btn-link text-white" type="button" (click)="openCookieSettings()" role="button" tabindex="0">
@@ -88,16 +88,16 @@
             routerLink="info/feedback" role="link" tabindex="0">{{ 'footer.link.feedback' | translate}}</a>
           </li>
         }
-      </ul>
+      </ul> -->
     </div>
-    @if (coarLdnEnabled$ | async) {
+    <!-- @if (coarLdnEnabled$ | async) {
       <div class="notify-enabled text-white align-self-end">
         <a class="coar-notify-support-route" routerLink="info/coar-notify-support" role="link" tabindex="0">
           <img class="n-coar" src="assets/images/n-coar.svg" [attr.alt]="'menu.header.image.logo' | translate" />
           {{ 'footer.link.coar-notify-support' | translate }}
         </a>
       </div>
-    }
+    } -->
   </div>
   <!-- Copyright -->
 </footer>
