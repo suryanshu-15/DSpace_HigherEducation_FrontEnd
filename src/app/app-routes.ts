@@ -58,10 +58,6 @@ export const APP_ROUTES: Route[] = [
     children: [
 
       { path: '', redirectTo: '/login', pathMatch: 'full' },
-      {
-        path: 'browse/department',
-        component: SearchPageComponent
-      },
 
       {
         path: 'reload/:rnd',
@@ -69,11 +65,12 @@ export const APP_ROUTES: Route[] = [
         pathMatch: 'full',
         canActivate: [reloadGuard],
       },
-      // {
-      //   path: "viewer",
-      //   loadChildren: () => import("./item-page/simple/field-components/viewer-routes").then((m) => m.ROUTES),
-      //   canActivate: [authenticatedGuard],
-      // },
+      {
+        path: "viewer",
+        loadChildren: () => import("./item-page/simple/field-components/viewer-routes").then((m) => m.ROUTES),
+        canActivate: [authenticatedGuard],
+      },
+      // this is the education department
       {
         path: 'home',
         loadChildren: () => import('./home-page/home-page-routes')

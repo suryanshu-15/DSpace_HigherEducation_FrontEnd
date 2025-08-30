@@ -7243,7 +7243,8 @@
   "file-download-link.request-copy": "Request a copy of ",
 
   "item.page.field.dc.casenumber": "Case Number",
-  "item.page.field.dc.relation.ispartof": "Case Number",
+  "item.page.field.dc.relation.ispartofseries": "Case Number",
+
 
   "item.page.field.dc.complient": "Complient",
 
@@ -7274,6 +7275,8 @@
   "browse.metadata.respondent.breadcrumbs": "By Respondent",
   "browse.metadata.casenumber.breadcrumbs": "By Case Number",
   "browse.metadata.complient.breadcrumbs": "By Complient",
+  "browse.metadata.complient": "Complient",
+  "browse.metadata.filename": "File Name",
 
   "item.page.field.dc.description.provenance": "Submission Description",
   "item.page.filesection.view": "View PDF",

@@ -86,15 +86,34 @@ import { ThemedFullFileSectionComponent } from './field-components/file-section/
 export class FullItemPageComponent extends ItemPageComponent implements OnInit, OnDestroy {
 
   itemRD$: BehaviorSubject<RemoteData<Item>>;
+  metadata$: Observable<{label: string, key: string, value: any[]}[]>;
 
-  metadata$: Observable<MetadataMap>;
-
-  /**
-   * True when the itemRD has been originated from its workspaceite/workflowitem, false otherwise.
-   */
   fromSubmissionObject = false;
-
   subs = [];
+
+  // 🔹 Key → Label mapping
+  private keyToLabel: Record<string, string> = {
+    'dc.contributor.author': 'Department',
+    'dc.title': 'Section',
+    'dc.title.alternative': 'File Number',
+    'dc.publisher': 'File Name',
+    'dc.date.issued': 'File Year',
+    'dc.identifier.citation': 'Respondent',
+    'dc.relation.ispartofseries': 'Case Number',
+    'dc.identifier': 'Complient',
+  };
+
+  // 🔹 Desired display order
+  private sortOrder = [
+    'dc.contributor.author',
+    'dc.title',
+    'dc.title.alternative',
+    'dc.publisher',
+    'dc.date.issued',
+    'dc.identifier.citation',
+    'dc.relation.ispartofseries',
+    'dc.identifier'
+  ];
 
   constructor(
     protected route: ActivatedRoute,
@@ -111,23 +130,30 @@ export class FullItemPageComponent extends ItemPageComponent implements OnInit, 
     super(route, router, items, authorizationService, responseService, signpostingDataService, linkHeadService, notifyInfoService, platformId);
   }
 
-  /*** AoT inheritance fix, will hopefully be resolved in the near future **/
   ngOnInit(): void {
     super.ngOnInit();
+
+    // 🔹 Process metadata into ordered + labeled structure
     this.metadata$ = this.itemRD$.pipe(
       map((rd: RemoteData<Item>) => rd.payload),
       filter((item: Item) => hasValue(item)),
-      map((item: Item) => item.metadata));
+      map((item: Item) => {
+        const metadataObj: MetadataMap = item.metadata;
+        return this.sortOrder
+          .filter(key => metadataObj[key]) // only keep if present
+          .map(key => ({
+            key,
+            label: this.keyToLabel[key],
+            value: metadataObj[key]
+          }));
+      })
+    );
 
     this.subs.push(this.route.data.subscribe((data: Data) => {
       this.fromSubmissionObject = hasValue(data.wfi) || hasValue(data.wsi);
-    }),
-    );
+    }));
   }
 
-  /**
-   * Navigate back in browser history.
-   */
   back() {
     this._location.back();
   }
@@ -135,18 +161,4 @@ export class FullItemPageComponent extends ItemPageComponent implements OnInit, 
   ngOnDestroy() {
     this.subs.filter((sub) => hasValue(sub)).forEach((sub) => sub.unsubscribe());
   }
-
-  // @Input() bitstreams: Bitstream[];
-
-  // /**
-  //  * Open file metadata view for a bitstream
-  //  */
-  // viewFileWithMetadata(bitstream: Bitstream): void {
-  //   // Option 1: open in a new tab (simple)
-  //   window.open(`/bitstreams/${bitstream.uuid}/metadata`, '_blank');
-
-  //   // Option 2 (optional): show in a modal -> you would need a modal service here
-  // }
-
-
 }

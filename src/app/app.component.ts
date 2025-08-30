@@ -34,6 +34,7 @@ import {
 import {
   delay,
   distinctUntilChanged,
+  filter,
   take,
   withLatestFrom,
 } from 'rxjs/operators';
@@ -87,30 +88,42 @@ export class AppComponent implements OnInit, AfterViewInit {
    * Whether or not the idle modal is is currently open
    */
   idleModalOpen: boolean;
+  showNavbar: boolean;
 
   constructor(
-    @Inject(NativeWindowService) private _window: NativeWindowRef,
-    @Inject(DOCUMENT) private document: any,
-    @Inject(PLATFORM_ID) private platformId: any,
-    private themeService: ThemeService,
-    private translate: TranslateService,
-    private store: Store<HostWindowState>,
-    private authService: AuthService,
-    private router: Router,
-    private cssService: CSSVariableService,
-    private modalService: NgbModal,
-    private modalConfig: NgbModalConfig,
-  ) {
-    this.notificationOptions = environment.notifications;
+  @Inject(NativeWindowService) private _window: NativeWindowRef,
+  @Inject(DOCUMENT) private document: any,
+  @Inject(PLATFORM_ID) private platformId: any,
+  private themeService: ThemeService,
+  private translate: TranslateService,
+  private store: Store<HostWindowState>,
+  private authService: AuthService,
+  private router: Router,
+  private cssService: CSSVariableService,
+  private modalService: NgbModal,
+  private modalConfig: NgbModalConfig,
+) {
+  // Routes where navbar should be hidden
+  const hiddenNavbarRoutes = ['/login', '/register', '/forgot-password'];
 
-    if (isPlatformBrowser(this.platformId)) {
-      this.trackIdleModal();
-    }
+  // Subscribe to route changes
+  this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe((event: NavigationEnd) => {
+      this.showNavbar = !hiddenNavbarRoutes.some(path => event.urlAfterRedirects.includes(path));
+    });
 
-    this.isThemeLoading$ = this.themeService.isThemeLoading$;
+  this.notificationOptions = environment.notifications;
 
-    this.storeCSSVariables();
+  if (isPlatformBrowser(this.platformId)) {
+    this.trackIdleModal();
   }
+
+  this.isThemeLoading$ = this.themeService.isThemeLoading$;
+
+  this.storeCSSVariables();
+}
+
 
   ngOnInit() {
     /** Implement behavior for interface {@link ModalBeforeDismiss} */
@@ -181,5 +194,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
       });
   }
+  
 
 }

@@ -4,7 +4,7 @@
   "atom": {
     "rewriteTsconfig": false
   },
-  "compilerOptions": {
+ "compilerOptions": {
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "declaration": false,
@@ -19,6 +19,7 @@
     "noImplicitAny": false,
     "strictNullChecks": false,
     "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
     "pretty": true,
     "target": "ES2022",
     "typeRoots": [
@@ -40,7 +41,18 @@
       "jasmine"
     ],
     "useDefineForClassFields": false,
-    "useUnknownInCatchVariables": true
+    "useUnknownInCatchVariables": true,
+
+    // 👇 Add this block
+  "paths": {
+  "pdfjs-dist": [
+    "node_modules/pdfjs-dist/build/pdf"
+  ],
+  "pdfjs-dist/*": [
+    "node_modules/pdfjs-dist/build/*"
+  ]
+}
+
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

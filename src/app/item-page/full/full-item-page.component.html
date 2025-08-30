@@ -18,22 +18,24 @@
                   </a>
                 </div> -->
         }
-        
+
         <div class="table-responsive">
-          <table class="table  table-striped">
+          <table class="table table-striped">
             <tbody>
-              @for (mdEntry of (metadata$ | async) | keyvalue; track mdEntry) {
+              @for (mdEntry of metadata$ | async; track mdEntry) {
               @for (mdValue of mdEntry.value; track mdValue) {
               <tr>
-                <td>{{ ('item.page.field.' + mdEntry.key) | translate }}</td>
-                <td>{{mdValue.value}}</td>
-                <td>{{mdValue.language}}</td>
+                <td>{{ mdEntry.label }}</td>
+                <td>{{ mdValue.value }}</td>
               </tr>
               }
               }
             </tbody>
           </table>
         </div>
+
+
+
         <ds-item-page-full-file-section [item]="item"></ds-item-page-full-file-section>
         <ds-item-page-collections [item]="item"></ds-item-page-collections>
         <ds-item-versions class="mt-2" [item]="item"></ds-item-versions>
