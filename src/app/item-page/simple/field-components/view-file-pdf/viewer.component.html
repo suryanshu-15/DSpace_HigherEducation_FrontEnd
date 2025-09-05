@@ -1,49 +1,51 @@
 <div class="viewer-shell">
-  <div *ngIf="loading" class="status">Loading…</div>
+  <!-- <div *ngIf="loading" class="status">Loading…</div> -->
   <div *ngIf="error" class="status error">Error loading PDF</div>
 
-  <div *ngIf="fileUrl && !loading && !error" class="content-layout">
-    <!-- 🔹 LEFT: Metadata -->
+  <div class="viewer-content" *ngIf="!error">
+    <!-- LEFT: Metadata -->
     <div class="metadata-panel">
-      <h3>File Details</h3>
-      <table class="table table-striped">
-        <tbody>
-          <ng-container *ngIf="metadata$ | async as metadata">
-            <tr *ngFor="let mdEntry of metadata">
+      <div *ngIf="metadataObj?.length > 0; else noMetadata">
+        <h3>File Details</h3>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Label</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let mdEntry of metadataObj">
               <td>{{ mdEntry.label }}</td>
               <td>
-                <span *ngFor="let mdValue of mdEntry.value">{{ mdValue.value }}</span>
+                <ng-container *ngFor="let val of mdEntry.value; let last = last">
+                  {{ val.value }}<span *ngIf="!last">, </span>
+                </ng-container>
               </td>
             </tr>
-          </ng-container>
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #noMetadata>
+        <p>No metadata available.</p>
+      </ng-template>
 
-      <button class="btn btn-primary mt-3" (click)="downloadPdf()">
-        Download PDF
-      </button>
-    </div>
-
-    <!-- 🔹 RIGHT: PDF -->
-    <div class="pdf-panel">
-      <!-- <div class="toolbar mb-2">
-        <button (click)="zoomOut()">-</button>
-        <button (click)="resetZoom()">Reset</button>
-        <button (click)="zoomIn()">+</button>
-      </div> -->
-
-      <div class="scale-wrapper"
-           [style.transform]="'scale(' + zoomLevel + ')'"
-           style="transform-origin: top left; height: 100%; width: 100%;">
-        <iframe [src]="fileUrl"
-                class="pdf-iframe"
-                class="pdf-iframe"
-                frameborder="0"></iframe>
+      <div class="pdf-controls" *ngIf="fileUrl">
+        <button class="btn btn-primary mt-3 w-100" (click)="downloadPdf()">
+          Download PDF
+        </button>
       </div>
     </div>
-  </div>
 
-  <div *ngIf="!fileUrl && !loading && !error" class="no-pdf">
-    <p>No PDF available.</p>
+    <!-- RIGHT: PDF -->
+    <div class="pdf-panel" *ngIf="fileUrl">
+      <div
+        class="scale-wrapper"
+        [style.transform]="'scale(' + zoomLevel + ')'"
+        style="transform-origin: top left; width: 100%; height: 100%;"
+      >
+        <iframe [src]="fileUrl" class="pdf-iframe" frameborder="0"></iframe>
+      </div>
+    </div>
   </div>
 </div>

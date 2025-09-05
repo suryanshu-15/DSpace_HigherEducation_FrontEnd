@@ -9,7 +9,6 @@ export class PdfService {
 
   constructor(private http: HttpClient) {}
 
-  /** Fetch PDF as blob and return a safe object URL */
   getPdfUrl(uuid: string): Observable<string> {
     const url = `${this.baseUrl}/${uuid}/content`;
     return this.http.get(url, { responseType: 'blob' }).pipe(

@@ -325,6 +325,8 @@
 
   "admin.access-control.epeople.form.email": "Email",
 
+  "admin.access-control.epeople.form.password": "Password",
+
   "admin.access-control.epeople.form.emailHint": "Must be a valid email address",
 
   "admin.access-control.epeople.form.canLogIn": "Can log in",
@@ -3401,7 +3403,7 @@
 
   "login.form.forgot-password": "Have you forgotten your password?",
 
-  "login.form.header": "Please log in to Education System",
+  "login.form.header": "Please login",
 
   "login.form.new-user": "New user? Click here to register.",
 
@@ -7281,4 +7283,6 @@
   "item.page.field.dc.description.provenance": "Submission Description",
   "item.page.filesection.view": "View PDF",
 
+  "mydspace.breadcrumbs": "",
+  "nav.mydspace": "My Dspace",
 }

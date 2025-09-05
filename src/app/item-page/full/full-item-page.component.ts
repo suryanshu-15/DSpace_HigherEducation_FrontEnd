@@ -52,6 +52,7 @@ import { ItemPageComponent } from '../simple/item-page.component';
 import { ItemVersionsComponent } from '../versions/item-versions.component';
 import { ItemVersionsNoticeComponent } from '../versions/notice/item-versions-notice.component';
 import { ThemedFullFileSectionComponent } from './field-components/file-section/themed-full-file-section.component';
+import { MetadataService } from 'src/app/services/metadata.service';
 
 /**
  * This component renders a full item page.
@@ -86,12 +87,11 @@ import { ThemedFullFileSectionComponent } from './field-components/file-section/
 export class FullItemPageComponent extends ItemPageComponent implements OnInit, OnDestroy {
 
   itemRD$: BehaviorSubject<RemoteData<Item>>;
-  metadata$: Observable<{label: string, key: string, value: any[]}[]>;
+  metadata$: Observable<{ label: string, key: string, value: any[] }[]>;
 
   fromSubmissionObject = false;
   subs = [];
 
-  // 🔹 Key → Label mapping
   private keyToLabel: Record<string, string> = {
     'dc.contributor.author': 'Department',
     'dc.title': 'Section',
@@ -126,6 +126,7 @@ export class FullItemPageComponent extends ItemPageComponent implements OnInit, 
     protected linkHeadService: LinkHeadService,
     protected notifyInfoService: NotifyInfoService,
     @Inject(PLATFORM_ID) protected platformId: string,
+    private metadataService: MetadataService,
   ) {
     super(route, router, items, authorizationService, responseService, signpostingDataService, linkHeadService, notifyInfoService, platformId);
   }
@@ -133,14 +134,13 @@ export class FullItemPageComponent extends ItemPageComponent implements OnInit, 
   ngOnInit(): void {
     super.ngOnInit();
 
-    // 🔹 Process metadata into ordered + labeled structure
     this.metadata$ = this.itemRD$.pipe(
       map((rd: RemoteData<Item>) => rd.payload),
       filter((item: Item) => hasValue(item)),
       map((item: Item) => {
         const metadataObj: MetadataMap = item.metadata;
         return this.sortOrder
-          .filter(key => metadataObj[key]) // only keep if present
+          .filter(key => metadataObj[key])
           .map(key => ({
             key,
             label: this.keyToLabel[key],
@@ -149,10 +149,17 @@ export class FullItemPageComponent extends ItemPageComponent implements OnInit, 
       })
     );
 
+    // ✅ Push into service whenever metadata changes
+    this.metadata$.subscribe(meta => {
+      console.log("Metadata emitted to template:", meta);
+      this.metadataService.setMetadata(meta); // Store globally
+    });
+
     this.subs.push(this.route.data.subscribe((data: Data) => {
       this.fromSubmissionObject = hasValue(data.wfi) || hasValue(data.wsi);
     }));
   }
+
 
   back() {
     this._location.back();
@@ -160,5 +167,8 @@ export class FullItemPageComponent extends ItemPageComponent implements OnInit, 
 
   ngOnDestroy() {
     this.subs.filter((sub) => hasValue(sub)).forEach((sub) => sub.unsubscribe());
+  }
+  getMetadata() {
+    return this.metadata$;
   }
 }

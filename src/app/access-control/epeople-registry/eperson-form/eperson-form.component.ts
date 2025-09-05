@@ -112,6 +112,7 @@ export class EPersonFormComponent implements OnInit, OnDestroy {
   firstName: DynamicInputModel;
   lastName: DynamicInputModel;
   email: DynamicInputModel;
+  password: DynamicInputModel;
   // booleans
   canLogIn: DynamicCheckboxModel;
   requireCertificate: DynamicCheckboxModel;
@@ -136,6 +137,11 @@ export class EPersonFormComponent implements OnInit, OnDestroy {
       },
     },
     email: {
+      grid: {
+        host: 'row',
+      },
+    },
+    password: {
       grid: {
         host: 'row',
       },
@@ -310,6 +316,14 @@ export class EPersonFormComponent implements OnInit, OnDestroy {
       },
       hint: this.translateService.instant(`${this.messagePrefix}.emailHint`),
     });
+    this.password = new DynamicInputModel({
+      id: 'password',
+      label: this.translateService.instant(`${this.messagePrefix}.password`),
+      name: 'password',
+      inputType: 'password',
+      validators: { required: null },
+      required: true,
+    });
     this.canLogIn = new DynamicCheckboxModel(
       {
         id: 'canLogIn',
@@ -328,8 +342,8 @@ export class EPersonFormComponent implements OnInit, OnDestroy {
       this.firstName,
       this.lastName,
       this.email,
-      this.canLogIn,
-      this.requireCertificate,
+      this.password,
+
     ];
     this.formGroup = this.formBuilderService.createFormGroup(this.formModel);
     this.subs.push(this.activeEPerson$.subscribe((eperson: EPerson) => {
@@ -343,6 +357,7 @@ export class EPersonFormComponent implements OnInit, OnDestroy {
         firstName: eperson != null ? eperson.firstMetadataValue('eperson.firstname') : '',
         lastName: eperson != null ? eperson.firstMetadataValue('eperson.lastname') : '',
         email: eperson != null ? eperson.email : '',
+        password: '',
         canLogIn: eperson != null ? eperson.canLogIn : true,
         requireCertificate: eperson != null ? eperson.requireCertificate : false,
       });
@@ -421,6 +436,7 @@ export class EPersonFormComponent implements OnInit, OnDestroy {
             ],
           },
           email: this.email.value,
+          password: this.password.value,
           canLogIn: this.canLogIn.value,
           requireCertificate: this.requireCertificate.value,
         };

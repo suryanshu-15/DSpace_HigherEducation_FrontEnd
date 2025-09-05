@@ -79,6 +79,7 @@ export class Item extends DSpaceObject implements ChildHALResource, HandleObject
    */
   @deserialize
   _links: {
+    bitstreams: any;
     mappedCollections: HALLink;
     relationships: HALLink;
     bundles: HALLink;

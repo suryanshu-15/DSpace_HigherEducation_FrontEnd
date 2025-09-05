@@ -57,7 +57,7 @@ export const APP_ROUTES: Route[] = [
     canActivateChild: [ServerCheckGuard],
     children: [
 
-      { path: '', redirectTo: '/login', pathMatch: 'full' },
+      { path: '', redirectTo: '/home', pathMatch: 'full' },
 
       {
         path: 'reload/:rnd',
@@ -91,13 +91,13 @@ export const APP_ROUTES: Route[] = [
         path: 'community-list',
         loadChildren: () => import('./community-list-page/community-list-page-routes')
           .then((m) => m.ROUTES),
-        canActivate: [endUserAgreementCurrentUserGuard],
+        canActivate: [endUserAgreementCurrentUserGuard, authenticatedGuard],
       },
       {
         path: 'id',
         loadChildren: () => import('./lookup-by-id/lookup-by-id-routes')
           .then((m) => m.ROUTES),
-        canActivate: [endUserAgreementCurrentUserGuard],
+        canActivate: [endUserAgreementCurrentUserGuard, authenticatedGuard],
       },
       {
         path: 'handle',
@@ -166,13 +166,13 @@ export const APP_ROUTES: Route[] = [
         loadChildren: () => import('./search-page/search-page-routes')
           .then((m) => m.ROUTES),
         data: { enableRSS: true },
-        canActivate: [endUserAgreementCurrentUserGuard],
+        canActivate: [endUserAgreementCurrentUserGuard, authenticatedGuard],
       },
       {
         path: 'browse',
         loadChildren: () => import('./browse-by/browse-by-page-routes')
           .then((m) => m.ROUTES),
-        canActivate: [endUserAgreementCurrentUserGuard],
+        canActivate: [endUserAgreementCurrentUserGuard, authenticatedGuard],
       },
       {
         path: ADMIN_MODULE_PATH,

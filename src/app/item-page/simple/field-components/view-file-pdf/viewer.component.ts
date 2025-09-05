@@ -3,13 +3,8 @@ import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-import { map, filter } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 
-import { RemoteData } from 'src/app/core/data/remote-data';
-import { Item } from 'src/app/core/shared/item.model';
-import { MetadataMap } from 'src/app/core/shared/metadata.models';
-import { hasValue } from 'src/app/shared/empty.util';
+import { MetadataService } from 'src/app/services/metadata.service';
 
 @Component({
   standalone: true,
@@ -20,86 +15,44 @@ import { hasValue } from 'src/app/shared/empty.util';
 })
 export class ViewerComponent {
   fileUrl: SafeResourceUrl | null = null;
-  loading = true;
+  // loading = true;
   error = false;
   zoomLevel = 1.0;
 
-  metadata$: Observable<{ label: string; key: string; value: any[] }[]> | null = null;
+  metadataObj: any[] = []; // <-- store array directly
+
   private readonly BASE = 'http://localhost:8080';
-
-  // 🔹 Key → Label mapping
-  private keyToLabel: Record<string, string> = {
-    'dc.contributor.author': 'Department',
-    'dc.title': 'Section',
-    'dc.title.alternative': 'File Number',
-    'dc.publisher': 'File Name',
-    'dc.date.issued': 'File Year',
-    'dc.identifier.citation': 'Respondent',
-    'dc.relation.ispartofseries': 'Case Number',
-    'dc.identifier': 'Compliant',
-  };
-
-  // 🔹 Desired display order
-  private sortOrder = [
-    'dc.contributor.author',
-    'dc.title',
-    'dc.title.alternative',
-    'dc.publisher',
-    'dc.date.issued',
-    'dc.identifier.citation',
-    'dc.relation.ispartofseries',
-    'dc.identifier',
-  ];
-  itemRD$: any;
 
   constructor(
     private http: HttpClient,
     private sanitizer: DomSanitizer,
     private route: ActivatedRoute,
+    private metadataService: MetadataService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) {
-      this.loading = false;
+      // this.loading = false;
       return;
     }
 
-    
+    // Directly assign metadataObj
+    this.metadataObj = this.metadataService.getMetadata() || [];
 
-    // Handle route params (UUID of the file + item metadata)
     this.route.paramMap.subscribe((pm) => {
       const uuid = pm.get('UUID');
-      console.log(uuid)
       if (!uuid) {
         this.error = true;
-        this.loading = false;
-        console.error('Missing :UUID in route');
+        // this.loading = false;
         return;
       }
       this.fetchPdf(uuid);
-      
-      this.metadata$ = this.itemRD$.pipe(
-      map((rd: RemoteData<Item>) => rd.payload),
-      filter((item: Item) => hasValue(item)),
-      map((item: Item) => {
-        const metadataObj: MetadataMap = item.metadata;
-        return this.sortOrder
-          .filter(key => metadataObj[key])
-          .map(key => ({
-            key,
-            label: this.keyToLabel[key],
-            value: metadataObj[key]
-          }));
-      })
-    );
-    console.log(this.metadata$)
-
     });
   }
 
   private fetchPdf(uuid: string) {
-    this.loading = true;
+    // this.loading = true;
     this.error = false;
 
     const url = `${this.BASE}/server/api/core/bitstreams/${uuid}/content`;
@@ -113,24 +66,37 @@ export class ViewerComponent {
         next: (blob) => {
           const objUrl = URL.createObjectURL(blob);
           this.fileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(objUrl);
-          this.loading = false;
+          // this.loading = false;
         },
         error: (err) => {
-          console.error('PDF fetch failed:', err);
           this.error = true;
-          this.loading = false;
+          // this.loading = false;
         },
       });
   }
 
   downloadPdf() {
-    if (!this.fileUrl) return;
+    let filename = 'document.pdf';
+
+    const nameEntry = this.metadataObj?.find(
+      md => md.key.toLowerCase().includes('dc.publisher')
+    );
+    console.log(nameEntry);
+
+    if (nameEntry && nameEntry.value?.length > 0) {
+      filename = nameEntry.value[0].value;
+      if (!filename.toLowerCase().endsWith('.pdf')) {
+        filename += '.pdf';
+      }
+      console.log(filename)
+    }
+
+    // Create download link
     const a = document.createElement('a');
     a.href = (this.fileUrl as any).changingThisBreaksApplicationSecurity;
-    a.download = 'document.pdf';
+    a.download = filename;
     a.click();
   }
-
   zoomIn() {
     this.zoomLevel = Math.min(this.zoomLevel + 0.25, 5);
   }

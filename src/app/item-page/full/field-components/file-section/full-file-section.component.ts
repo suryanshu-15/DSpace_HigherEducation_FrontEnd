@@ -159,6 +159,10 @@ export class FullFileSectionComponent extends FileSectionComponent implements On
     console.log("Viewing file:", file);
     // Example: navigate to a viewer page
     this.router.navigate(['/viewer', file.uuid]);
+  //   this.router.navigate(
+  //   ['/viewer', file.uuid],
+  //   { state: { metadata } }   // pass metadata via state
+  // );
   }
 
 }
