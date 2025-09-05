@@ -1801,7 +1801,7 @@
 
   "dso-selector.set-scope.community.head": "Select a search scope",
 
-  "dso-selector.set-scope.community.button": "Search all of Education System",
+  "dso-selector.set-scope.community.button": "Search all of Education",
 
   "dso-selector.set-scope.community.or-divider": "or",
 
@@ -3468,6 +3468,7 @@
   "menu.section.browse_global_by_section": "By Section",
 
   "menu.section.browse_global_by_filenumber": "By File Number",
+  "menu.section.browse_global_by_filenumber": "By Petitioner Name",
 
   "browse.comcol.by.department": "By Department",
 
@@ -3480,7 +3481,7 @@
   "browse.comcol.by.casenumber": "By Case Number",
 
 
-  "menu.section.browse_global": "All of Education System",
+  "menu.section.browse_global": "All of Education",
 
   "menu.section.browse_global_by_author": "By Author",
 
@@ -3493,7 +3494,7 @@
   "menu.section.browse_global_by_filename":"By File Name",
   "menu.section.browse_global_by_casenumber":"By Case Number",
   "menu.section.browse_global_by_respondent":"By Respondent Name",
-  "menu.section.browse_global_by_complient":"By Complient Name",
+  "menu.section.browse_global_by_petitioner":"By petitioner Name",
 
   "menu.section.browse_global_by_dateissued": "By Issue Date",
 
@@ -3727,7 +3728,7 @@
 
   "notification.suggestion.please": "Please",
 
-  "nav.browse.header": "All of Education System",
+  "nav.browse.header": "All of Education",
 
   "nav.community-browse.header": "By Community",
 
@@ -4908,7 +4909,7 @@
 
   "search.form.search_Education System": "All repository",
 
-  "search.form.scope.all": "All of Education System",
+  "search.form.scope.all": "All of Education",
 
   "search.results.head": "Search Results",
 
@@ -7248,7 +7249,7 @@
   "item.page.field.dc.relation.ispartofseries": "Case Number",
 
 
-  "item.page.field.dc.complient": "Complient",
+  "item.page.field.dc.petitioner": "Petitioner",
 
   "item.page.field.dc.date.issued": "File Year",
 
@@ -7276,8 +7277,8 @@
   "browse.metadata.filename.breadcrumbs": "By File Name",
   "browse.metadata.respondent.breadcrumbs": "By Respondent",
   "browse.metadata.casenumber.breadcrumbs": "By Case Number",
-  "browse.metadata.complient.breadcrumbs": "By Complient",
-  "browse.metadata.complient": "Complient",
+  "browse.metadata.petitioner.breadcrumbs": "By Petitioner",
+  "browse.metadata.petitioner": "Petitioner",
   "browse.metadata.filename": "File Name",
 
   "item.page.field.dc.description.provenance": "Submission Description",

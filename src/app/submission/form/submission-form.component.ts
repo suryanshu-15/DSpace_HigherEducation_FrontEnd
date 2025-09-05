@@ -186,7 +186,7 @@ export class SubmissionFormComponent implements OnChanges, OnDestroy {
       this.submissionSections = this.submissionService.getSubmissionObject(this.submissionId).pipe(
         filter(() => this.isActive),
         map((submission: SubmissionObjectEntry) => {
-          console.log(submission?.sections?.traditionalpageone?.data)
+          // console.log(submission?.sections?.traditionalpageone?.data)
           return submission.isLoading
         }),
         map((isLoading: boolean) => isLoading),

@@ -162,11 +162,7 @@ export class SubmissionEditComponent implements OnDestroy, OnInit {
             this.selfUrl = submissionObjectRD.payload._links.self.href;
             this.sections = submissionObjectRD.payload.sections;
             this.itemLink$.next(submissionObjectRD.payload._links.item.href);
-            // console.log(this.item)
-            // console.log(this.sections)
             this.item = submissionObjectRD.payload.item;
-            // console.log(this.collectionId)
-            console.log(this.subs)
             this.submissionDefinition = (submissionObjectRD.payload.submissionDefinition as SubmissionDefinitionsModel);
           }
         } else {

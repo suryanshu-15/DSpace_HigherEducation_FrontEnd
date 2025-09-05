@@ -98,9 +98,9 @@ export class FullItemPageComponent extends ItemPageComponent implements OnInit, 
     'dc.title.alternative': 'File Number',
     'dc.publisher': 'File Name',
     'dc.date.issued': 'File Year',
-    'dc.identifier.citation': 'Respondent',
     'dc.relation.ispartofseries': 'Case Number',
-    'dc.identifier': 'Complient',
+    'dc.identifier.citation': 'Respondent',
+    'dc.identifier': 'Petitioner',
   };
 
   // 🔹 Desired display order
@@ -110,8 +110,8 @@ export class FullItemPageComponent extends ItemPageComponent implements OnInit, 
     'dc.title.alternative',
     'dc.publisher',
     'dc.date.issued',
-    'dc.identifier.citation',
     'dc.relation.ispartofseries',
+    'dc.identifier.citation',
     'dc.identifier'
   ];
 
