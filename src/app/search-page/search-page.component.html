@@ -4,10 +4,10 @@
   <input type="text" placeholder="Case Type" [(ngModel)]="caseType">
   <input type="text" placeholder="Case Year" [(ngModel)]="caseYear">
   <button (click)="searchCases()">Search</button>
-</div>
+</div> -->
 
 <div class="search-results">
   <div *ngFor="let result of results">
     <p>{{ result.indexableObject?.metadata['dc.title'][0]?.value }}</p>
   </div>
-</div> -->
+</div> 

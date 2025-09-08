@@ -3091,7 +3091,7 @@
 
   "item.select.table.deselect": "Deselect item",
 
-  "item.select.table.author": "Author",
+  "item.select.table.author": "Department",
 
   "item.select.table.collection": "Collection",
 
@@ -3468,7 +3468,7 @@
   "menu.section.browse_global_by_section": "By Section",
 
   "menu.section.browse_global_by_filenumber": "By File Number",
-  "menu.section.browse_global_by_filenumber": "By Petitioner Name",
+  "menu.section.browse_global_by_petitioner": "By Petitioner Name",
 
   "browse.comcol.by.department": "By Department",
 
@@ -3479,6 +3479,8 @@
   "browse.comcol.by.respondent": "By Respondent",
 
   "browse.comcol.by.casenumber": "By Case Number",
+  "browse.comcol.by.petitioner": "By Petitioner",
+  "browse.comcol.by.filename": "By File Name",
 
 
   "menu.section.browse_global": "All of Education",
@@ -7278,7 +7280,6 @@
   "browse.metadata.respondent.breadcrumbs": "By Respondent",
   "browse.metadata.casenumber.breadcrumbs": "By Case Number",
   "browse.metadata.petitioner.breadcrumbs": "By Petitioner",
-  "browse.metadata.petitioner": "Petitioner",
   "browse.metadata.filename": "File Name",
 
   "item.page.field.dc.description.provenance": "Submission Description",

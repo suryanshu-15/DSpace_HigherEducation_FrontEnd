@@ -181,23 +181,22 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
    * @param {string} injectedSubmissionId
    */
   constructor(protected cdr: ChangeDetectorRef,
-              protected formBuilderService: FormBuilderService,
-              protected formOperationsService: SectionFormOperationsService,
-              protected formService: FormService,
-              protected formConfigService: SubmissionFormsConfigDataService,
-              protected notificationsService: NotificationsService,
-              protected sectionService: SectionsService,
-              protected submissionService: SubmissionService,
-              protected translate: TranslateService,
-              protected submissionObjectService: SubmissionObjectDataService,
-              protected objectCache: ObjectCacheService,
-              protected requestService: RequestService,
-              @Inject('collectionIdProvider') public injectedCollectionId: string,
-              @Inject('sectionDataProvider') public injectedSectionData: SectionDataObject,
-              @Inject('submissionIdProvider') public injectedSubmissionId: string) {
+    protected formBuilderService: FormBuilderService,
+    protected formOperationsService: SectionFormOperationsService,
+    protected formService: FormService,
+    protected formConfigService: SubmissionFormsConfigDataService,
+    protected notificationsService: NotificationsService,
+    protected sectionService: SectionsService,
+    protected submissionService: SubmissionService,
+    protected translate: TranslateService,
+    protected submissionObjectService: SubmissionObjectDataService,
+    protected objectCache: ObjectCacheService,
+    protected requestService: RequestService,
+    @Inject('collectionIdProvider') public injectedCollectionId: string,
+    @Inject('sectionDataProvider') public injectedSectionData: SectionDataObject,
+    @Inject('submissionIdProvider') public injectedSubmissionId: string) {
     super(injectedCollectionId, injectedSectionData, injectedSubmissionId);
   }
-
   /**
    * Initialize all instance variables and retrieve form configuration
    */
@@ -447,11 +446,25 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
     if ((environment.submission.autosave.metadata.indexOf(metadata) !== -1 && isNotEmpty(value)) || this.hasRelatedCustomError(metadata)) {
       this.submissionService.dispatchSave(this.submissionId);
     }
+    if (metadata === 'dc.contributor.author') {
+      const contributor = value?.value;
+      const titleArray = this.formModel.find(
+        (m: any) => m.group?.some((g: any) => g.name === 'dc.title')
+      );
+      console.log(titleArray)
+      console.log(contributor)
+      // console.log(this.formModel.map(m => ({ id: m.id, name: (m as any).name })));
+      if (titleArray) {
+        // hide unless exact match
+        titleArray.hidden = contributor !== 'Higher education department';
+        this.cdr.detectChanges();
+      }
+    }
   }
 
   private hasRelatedCustomError(medatata): boolean {
     const index = findIndex(this.sectionData.errorsToShow, { path: this.pathCombiner.getPath(medatata).path });
-    if (index  !== -1) {
+    if (index !== -1) {
       const error = this.sectionData.errorsToShow[index];
       const validator = error.message.replace('error.validation.', '');
       return !environment.form.validatorMap.hasOwnProperty(validator);
