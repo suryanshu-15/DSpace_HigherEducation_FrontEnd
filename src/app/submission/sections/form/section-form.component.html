@@ -1,15 +1,28 @@
 @if (isLoading) {
   <ds-loading message="Loading..."></ds-loading>
 }
-@if (!isLoading && formModel) {
-  <ds-form #formRef="formComponent"
-    [formId]="formId"
-    [formModel]="formModel"
-    [displaySubmit]="false"
-    [displayCancel]="false"
-    (dfChange)="onChange($event)"
-    (dfFocus)="onFocus($event)"
-    (remove)="onRemove($event)"
-    (ngbEvent)="onCustomEvent($event)"
-  (removeArrayItem)="onRemove($event)"></ds-form>
+
+@if (!isLoading) {
+
+  <!-- ── Section / Institution cascading selector ──────────────────────────── -->
+  <ds-section-institution
+    (valueChange)="onSectionInstitutionChange($event)">
+  </ds-section-institution>
+
+  <!-- ── Remaining DSpace form fields ─────────────────────────────────────── -->
+  @if (formModel) {
+    <ds-form
+      #formRef="formComponent"
+      [formId]="formId"
+      [formModel]="formModel"
+      [displaySubmit]="false"
+      [displayCancel]="false"
+      (dfChange)="onChange($event)"
+      (dfFocus)="onFocus($event)"
+      (remove)="onRemove($event)"
+      (ngbEvent)="onCustomEvent($event)"
+      (removeArrayItem)="onRemove($event)">
+    </ds-form>
+  }
+
 }

@@ -115,7 +115,9 @@
           "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
             "buildTarget": "dspace-angular:build",
-            "port": 4000
+            "port": 4000,
+            "proxyConfig": "proxy.config.json",
+            "proxyConfig": "proxy.config.json"
           },
           "configurations": {
             "development": {
@@ -226,7 +228,8 @@
           "options": {
             "buildTarget": "dspace-angular:build",
             "serverTarget": "dspace-angular:server",
-            "port": 4000
+            "port": 4000,
+            "proxyConfig": "proxy.config.json"
           },
           "configurations": {
             "production": {

@@ -1,4 +1,3 @@
-
 import {
   ChangeDetectorRef,
   Component,
@@ -68,6 +67,12 @@ import { SectionDataObject } from '../models/section-data.model';
 import { SectionsService } from '../sections.service';
 import { SectionFormOperationsService } from './section-form-operations.service';
 
+// ── NEW IMPORTS ────────────────────────────────────────────────────────────────
+import {
+  SectionInstitutionComponent,
+  SectionInstitutionValue,
+} from '../../../shared/section-institution/section-institution.component';
+
 /**
  * This component represents a section that contains a Form.
  */
@@ -78,109 +83,35 @@ import { SectionFormOperationsService } from './section-form-operations.service'
   imports: [
     FormComponent,
     ThemedLoadingComponent,
+    // ── ADD THIS ──────────────────────────────────────
+    SectionInstitutionComponent,
   ],
   standalone: true,
 })
 export class SubmissionSectionFormComponent extends SectionModelComponent {
 
-  /**
-   * The form id
-   * @type {string}
-   */
   public formId: string;
-
-  /**
-   * The form model
-   * @type {DynamicFormControlModel[]}
-   */
   public formModel: DynamicFormControlModel[];
-
-  /**
-   * A boolean representing if this section is updating
-   * @type {boolean}
-   */
   public isUpdating = false;
-
-  /**
-   * A boolean representing if this section is loading
-   * @type {boolean}
-   */
   public isLoading = true;
 
-  /**
-   * A map representing all field on their way to be removed
-   * @type {Map}
-   */
+  // ── NEW: tracks the selected institution value ─────────────────────────────
+  public sectionInstitutionValue: SectionInstitutionValue | null = null;
+
   protected fieldsOnTheirWayToBeRemoved: Map<string, number[]> = new Map();
-
-  /**
-   * The form config
-   * @type {SubmissionFormsModel}
-   */
   protected formConfig: SubmissionFormsModel;
-
-  /**
-   * The form data
-   * @type {any}
-   */
   protected formData: any = Object.create({});
-
-  /**
-   * Store the
-   * @protected
-   */
   protected sectionMetadata: string[];
-
-  /**
-   * The [JsonPatchOperationPathCombiner] object
-   * @type {JsonPatchOperationPathCombiner}
-   */
   protected pathCombiner: JsonPatchOperationPathCombiner;
-
-  /**
-   * The [FormFieldPreviousValueObject] object
-   * @type {FormFieldPreviousValueObject}
-   */
   protected previousValue: FormFieldPreviousValueObject = new FormFieldPreviousValueObject();
-
-  /**
-   * The list of Subscription
-   * @type {Array}
-   */
   protected subs: Subscription[] = [];
-
   protected submissionObject: SubmissionObject;
-
-  /**
-   * A flag representing if this section is readonly
-   */
   protected isSectionReadonly = false;
 
-  /**
-   * The FormComponent reference
-   */
   @ViewChild('formRef') private formRef: FormComponent;
 
-  /**
-   * Initialize instance variables
-   *
-   * @param {ChangeDetectorRef} cdr
-   * @param {FormBuilderService} formBuilderService
-   * @param {SectionFormOperationsService} formOperationsService
-   * @param {FormService} formService
-   * @param {SubmissionFormsConfigDataService} formConfigService
-   * @param {NotificationsService} notificationsService
-   * @param {SectionsService} sectionService
-   * @param {SubmissionService} submissionService
-   * @param {TranslateService} translate
-   * @param {SubmissionObjectDataService} submissionObjectService
-   * @param {ObjectCacheService} objectCache
-   * @param {RequestService} requestService
-   * @param {string} injectedCollectionId
-   * @param {SectionDataObject} injectedSectionData
-   * @param {string} injectedSubmissionId
-   */
-  constructor(protected cdr: ChangeDetectorRef,
+  constructor(
+    protected cdr: ChangeDetectorRef,
     protected formBuilderService: FormBuilderService,
     protected formOperationsService: SectionFormOperationsService,
     protected formService: FormService,
@@ -194,12 +125,11 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
     protected requestService: RequestService,
     @Inject('collectionIdProvider') public injectedCollectionId: string,
     @Inject('sectionDataProvider') public injectedSectionData: SectionDataObject,
-    @Inject('submissionIdProvider') public injectedSubmissionId: string) {
+    @Inject('submissionIdProvider') public injectedSubmissionId: string,
+  ) {
     super(injectedCollectionId, injectedSectionData, injectedSubmissionId);
   }
-  /**
-   * Initialize all instance variables and retrieve form configuration
-   */
+
   onSectionInit() {
     this.pathCombiner = new JsonPatchOperationPathCombiner('sections', this.sectionData.id);
     this.formId = this.formService.getUniqueId(this.sectionData.id);
@@ -218,10 +148,8 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
       take(1))
       .subscribe(([sectionData, submissionObject, isSectionReadOnly]: [WorkspaceitemSectionFormObject, SubmissionObject, boolean]) => {
         if (isUndefined(this.formModel)) {
-          // this.sectionData.errorsToShow = [];
           this.submissionObject = submissionObject;
           this.isSectionReadonly = isSectionReadOnly;
-          // Is the first loading so init form
           this.initForm(sectionData, this.sectionData.errorsToShow, this.sectionData.serverValidationErrors);
           this.sectionData.data = sectionData;
           this.subscriptions();
@@ -231,71 +159,41 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
       });
   }
 
-  /**
-   * Unsubscribe from all subscriptions
-   */
   onSectionDestroy() {
     this.subs
       .filter((subscription) => hasValue(subscription))
       .forEach((subscription) => subscription.unsubscribe());
   }
 
-  /**
-   * Get section status
-   *
-   * @return Observable<boolean>
-   *     the section status
-   */
   protected getSectionStatus(): Observable<boolean> {
     const formStatus$ = this.formService.isValid(this.formId);
     const serverValidationStatus$ = this.sectionService.getSectionServerErrors(this.submissionId, this.sectionData.id).pipe(
       map((validationErrors) => isEmpty(validationErrors)),
     );
-
     return observableCombineLatest([formStatus$, serverValidationStatus$]).pipe(
       map(([formValidation, serverSideValidation]: [boolean, boolean]) => formValidation && serverSideValidation),
     );
   }
 
-  /**
-   * Check if the section data has been enriched by the server
-   *
-   * @param sectionData
-   *    the section data retrieved from the server
-   */
   hasMetadataEnrichment(sectionData: WorkspaceitemSectionFormObject): boolean {
-
     const sectionDataToCheck = {};
     Object.keys(sectionData).forEach((key) => {
-      // todo: removing Relationships works due to a bug -- dspace.entity.type is included in sectionData, which is what triggers the update;
-      //       if we use this.sectionMetadata.includes(key), this field is filtered out and removed Relationships won't disappear from the form.
       if (this.inCurrentSubmissionScope(key)) {
         sectionDataToCheck[key] = sectionData[key];
       }
     });
-
     const diffResult = [];
-
-    // compare current form data state with section data retrieved from store
     const diffObj = difference(sectionDataToCheck, this.formData);
-
-    // iterate over differences to check whether they are actually different
-    Object.keys(diffObj)
-      .forEach((key) => {
-        diffObj[key].forEach((value) => {
-          // the findIndex extra check excludes values already present in the form but in different positions
-          if (value.hasOwnProperty('value') && findIndex(this.formData[key], { value: value.value }) < 0) {
-            diffResult.push(value);
-          }
-        });
+    Object.keys(diffObj).forEach((key) => {
+      diffObj[key].forEach((value) => {
+        if (value.hasOwnProperty('value') && findIndex(this.formData[key], { value: value.value }) < 0) {
+          diffResult.push(value);
+        }
       });
+    });
     return isNotEmpty(diffResult);
   }
 
-  /**
-   * Whether a specific field is editable in the current scope. Unscoped fields always return true.
-   * @private
-   */
   private inCurrentSubmissionScope(field: string): boolean {
     const scope = this.formConfig?.rows.find((row: FormRowModel) => {
       if (row.fields?.[0]?.selectableMetadata) {
@@ -308,24 +206,15 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
     })?.fields?.[0]?.scope;
 
     switch (scope) {
-      case SubmissionScopeType.WorkspaceItem.valueOf(): {
+      case SubmissionScopeType.WorkspaceItem.valueOf():
         return (this.submissionObject as any).type === WorkspaceItem.type.value;
-      }
-      case SubmissionScopeType.WorkflowItem.valueOf(): {
+      case SubmissionScopeType.WorkflowItem.valueOf():
         return (this.submissionObject as any).type === WorkflowItem.type.value;
-      }
-      default: {
+      default:
         return true;
-      }
     }
   }
 
-  /**
-   * Initialize form model
-   *
-   * @param sectionData
-   *    the section data retrieved from the server
-   */
   initForm(sectionData: WorkspaceitemSectionFormObject, errorsToShow: SubmissionSectionError[], serverValidationErrors: SubmissionSectionError[]): void {
     try {
       this.formModel = this.formBuilderService.modelFromConfiguration(
@@ -351,14 +240,7 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
     }
   }
 
-  /**
-   * Update form model
-   *
-   * @param sectionState
-   *    the section state retrieved from the server
-   */
   updateForm(sectionState: SubmissionSectionObject): void {
-
     const sectionData = sectionState.data as WorkspaceitemSectionFormObject;
     const errors = sectionState.errorsToShow;
 
@@ -378,15 +260,8 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
     } else if (isNotEmpty(errors) || isNotEmpty(this.sectionData.errorsToShow)) {
       this.checksForErrors(errors);
     }
-
   }
 
-  /**
-   * Check if there are form validation error retrieved from server
-   *
-   * @param errors
-   *    the section errors retrieved from the server
-   */
   checksForErrors(errors: SubmissionSectionError[]): void {
     this.formService.isFormInitialized(this.formId).pipe(
       find((status: boolean) => status === true && !this.isUpdating))
@@ -397,23 +272,14 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
       });
   }
 
-  /**
-   * Initialize all subscriptions
-   */
   subscriptions(): void {
     this.subs.push(
-      /**
-       * Subscribe to form's data
-       */
       this.formService.getFormData(this.formId).pipe(
         distinctUntilChanged())
         .subscribe((formData) => {
           this.formData = formData;
         }),
 
-      /**
-       * Subscribe to section state
-       */
       this.sectionService.getSectionState(this.submissionId, this.sectionData.id, this.sectionData.sectionType).pipe(
         filter((sectionState: SubmissionSectionObject) => {
           return isNotEmpty(sectionState) && (isNotEmpty(sectionState.data) || isNotEmpty(sectionState.errorsToShow));
@@ -427,13 +293,41 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
     );
   }
 
+  // ── NEW: called when SectionInstitutionComponent emits a value ─────────────
   /**
-   * Method called when a form dfChange event is fired.
-   * Dispatch form operations based on changes.
+   * Receives the cascading selection from ds-section-institution and writes
+   * the stored value into DSpace metadata via the submission store.
    *
-   * @param event
-   *    the [[DynamicFormControlEvent]] emitted
+   * Stored in dc.contributor.author — change the field name below if you
+   * configure a dedicated custom metadata field for Section/Institution.
    */
+  onSectionInstitutionChange(value: SectionInstitutionValue): void {
+    this.sectionInstitutionValue = value;
+
+    // Find the dc.contributor.author field model in the form
+    // and update its value directly — this is the safest DSpace 7 approach
+    // because it goes through the existing form change pipeline
+    if (!this.formModel) { return; }
+
+    const authorGroup = this.formModel.find(
+      (m: any) => m.group?.some((g: any) => g.name === 'dc.contributor.author')
+        || (m as any).name === 'dc.contributor.author'
+    ) as any;
+
+    if (authorGroup) {
+      // Find the actual input field inside the group
+      const authorField = authorGroup.group
+        ? authorGroup.group.find((g: any) => g.name === 'dc.contributor.author')
+        : authorGroup;
+
+      if (authorField) {
+        authorField.value = value.storedValue;
+        this.cdr.detectChanges();
+        this.submissionService.dispatchSave(this.submissionId);
+      }
+    }
+  }
+
   onChange(event: DynamicFormControlEvent): void {
     this.formOperationsService.dispatchOperationsFromEvent(
       this.pathCombiner,
@@ -445,20 +339,6 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
 
     if ((environment.submission.autosave.metadata.indexOf(metadata) !== -1 && isNotEmpty(value)) || this.hasRelatedCustomError(metadata)) {
       this.submissionService.dispatchSave(this.submissionId);
-    }
-    if (metadata === 'dc.contributor.author') {
-      const contributor = value?.value;
-      const titleArray = this.formModel.find(
-        (m: any) => m.group?.some((g: any) => g.name === 'dc.title')
-      );
-      console.log(titleArray)
-      console.log(contributor)
-      // console.log(this.formModel.map(m => ({ id: m.id, name: (m as any).name })));
-      if (titleArray) {
-        // hide unless exact match
-        titleArray.hidden = contributor !== 'Higher education department';
-        this.cdr.detectChanges();
-      }
     }
   }
 
@@ -473,13 +353,6 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
     }
   }
 
-  /**
-   * Method called when a form dfFocus event is fired.
-   * Initialize [FormFieldPreviousValueObject] instance.
-   *
-   * @param event
-   *    the [[DynamicFormControlEvent]] emitted
-   */
   onFocus(event: DynamicFormControlEvent): void {
     const value = this.formOperationsService.getFieldValueFromChangeEvent(event);
     const path = this.formBuilderService.getPath(event.model);
@@ -492,18 +365,10 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
     }
   }
 
-  /**
-   * Method called when a form remove event is fired.
-   * Dispatch form operations based on changes.
-   *
-   * @param event
-   *    the [[DynamicFormControlEvent]] emitted
-   */
   onRemove(event: DynamicFormControlEvent): void {
     const fieldId = this.formBuilderService.getId(event.model);
     const fieldIndex = this.formOperationsService.getArrayIndexFromEvent(event);
 
-    // Keep track that this field will be removed
     if (this.fieldsOnTheirWayToBeRemoved.has(fieldId)) {
       const indexes = this.fieldsOnTheirWayToBeRemoved.get(fieldId);
       indexes.push(fieldIndex);
@@ -517,17 +382,8 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
       event,
       this.previousValue,
       this.hasStoredValue(fieldId, fieldIndex));
-
   }
 
-  /**
-   * Check if the specified form field has already a value stored
-   *
-   * @param fieldId
-   *    the section data retrieved from the serverù
-   * @param index
-   *    the section data retrieved from the server
-   */
   hasStoredValue(fieldId, index): boolean {
     if (isNotEmpty(this.sectionData.data)) {
       return this.sectionData.data.hasOwnProperty(fieldId) &&
@@ -538,23 +394,10 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
     }
   }
 
-  /**
-   * Check if the specified field is on the way to be removed
-   *
-   * @param fieldId
-   *    the section data retrieved from the serverù
-   * @param index
-   *    the section data retrieved from the server
-   */
   isFieldToRemove(fieldId, index) {
     return this.fieldsOnTheirWayToBeRemoved.has(fieldId) && this.fieldsOnTheirWayToBeRemoved.get(fieldId).includes(index);
   }
 
-  /**
-   * Handle the customEvent (ex. drag-drop move event).
-   * The customEvent is stored inside event.$event
-   * @param $event
-   */
   onCustomEvent(event: DynamicFormControlEvent) {
     this.formOperationsService.dispatchOperationsFromEvent(
       this.pathCombiner,
