@@ -6,19 +6,14 @@
            [attr.rel]="(linkType === linkTypes.ExternalLink) ? 'noopener noreferrer' : null"
            [routerLink]="[itemPageRoute, 'full']"
            class="dont-break-out d-block p-1">
-          <!-- <ds-thumbnail [thumbnail]="dso?.thumbnail | async" [limitWidth]="true"> -->
-          <!-- </ds-thumbnail> -->
         </a>
       }
-      <!-- @if (linkType === linkTypes.None) {
-        <span class="dont-break-out d-block p-1">
-          <ds-thumbnail [thumbnail]="dso?.thumbnail | async" [limitWidth]="true"></ds-thumbnail>
-        </span>
-      } -->
     </div>
   }
 
   <div [ngClass]="showThumbnails ? 'col-9' : 'col-12'" class="ps-3">
+    
+    <!-- Badges -->
     <div class="d-flex align-items-center mb-1">
       @if (showLabel) {
         <ds-badges [object]="dso" [context]="context" [showAccessStatus]="true"></ds-badges>
@@ -27,46 +22,39 @@
 
     @if (object !== undefined && object !== null) {
       <ds-truncatable [id]="dso.id" class="d-block">
+
+        <!-- 🔥 TITLE → FILE NUMBER -->
         @if (linkType !== linkTypes.None) {
           <a [target]="(linkType === linkTypes.ExternalLink) ? '_blank' : '_self'"
              [attr.rel]="(linkType === linkTypes.ExternalLink) ? 'noopener noreferrer' : null"
              [routerLink]="[itemPageRoute, 'full']"
              class="lead item-list-title dont-break-out fw-semibold mb-1 d-inline-block"
-             [innerHTML]="firstMetadataValue('dc.publisher')"
-             role="link"></a>
+             [innerHTML]="firstMetadataValue('dc.filenumber')"
+             role="link">
+          </a>
         }
+
         @if (linkType === linkTypes.None) {
           <span class="lead item-list-title dont-break-out fw-semibold mb-1 d-inline-block"
-                [innerHTML]="firstMetadataValue('dc.publisher')"></span>
+                [innerHTML]="firstMetadataValue('dc.filenumber')">
+          </span>
         }
 
-        <span class="text-muted small d-block mb-1">
-          <ds-truncatable-part [id]="dso.id" [minLines]="1">
-            @if (dso.firstMetadataValue('dc.publisher') || dso.firstMetadataValue('dc.date.issued')) {
-              (@if (dso.firstMetadataValue('dc.publisher')) {
-                <span class="item-list-publisher" [innerHTML]="firstMetadataValue('dc.publisher')"></span>
-              }
-              @if (dso.firstMetadataValue('dc.publisher') && dso.firstMetadataValue('dc.date.issued')) {
-                <span>, </span>
-              }
-              @if (dso.firstMetadataValue('dc.date.issued')) {
-                <span class="item-list-date" [innerHTML]="firstMetadataValue('dc.date.issued')"></span>
-              })
-            }
+        <!-- 🔥 FILE NAME -->
+        @if (dso.firstMetadataValue('dc.file.name')) {
+          <div class="text-muted small mb-1">
+            {{ dso.firstMetadataValue('dc.file.name') }}
+          </div>
+        }
 
-            @if (dso.allMetadata(['dc.contributor.author', 'dc.creator', 'dc.contributor.*']).length > 0) {
-              <span class="item-list-authors ms-1">
-                @for (author of allMetadataValues(['dc.contributor.author', 'dc.creator', 'dc.contributor.*']); track author; let last = $last) {
-                  <span>
-                    <span [innerHTML]="author"></span>
-                    @if (!last) { <span>; </span> }
-                  </span>
-                }
-              </span>
-            }
-          </ds-truncatable-part>
-        </span>
+        <!-- 🔥 FILE YEAR -->
+        @if (dso.firstMetadataValue('dc.file.year')) {
+          <div class="text-muted small mb-1">
+            Year: {{ dso.firstMetadataValue('dc.file.year') }}
+          </div>
+        }
 
+        <!-- 🔥 OPTIONAL: KEEP ABSTRACT -->
         @if (dso.firstMetadataValue('dc.description.abstract')) {
           <div class="item-list-abstract mt-2">
             <ds-truncatable-part [id]="dso.id" [minLines]="3">
@@ -74,6 +62,7 @@
             </ds-truncatable-part>
           </div>
         }
+
       </ds-truncatable>
     }
   </div>

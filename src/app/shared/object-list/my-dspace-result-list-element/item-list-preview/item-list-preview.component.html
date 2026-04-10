@@ -25,14 +25,13 @@
               @if (item.hasMetadata(['dc.contributor.author', 'dc.creator', 'dc.contributor.*']);) {
                 <span
                   class="item-list-authors">
-                  @if (item.allMetadataValues(['dc.contributor.author', 'dc.creator', 'dc.contributor.*']).length === 0) {
+                  @if (item.allMetadataValues(['dc.file.name', 'dc.filenumber', 'dc.file.year']).length === 0) {
                     <span
                       >{{'mydspace.results.no-authors'
                     | translate}}</span>
                   }
-                  @for (author of item.allMetadataValues(['dc.contributor.author', 'dc.creator', 'dc.contributor.*']); track author; let last = $last) {
-                    <span
-                      >
+                  @for (author of item.allMetadataValues(['dc.file.name', 'dc.filenumber', 'dc.file.year']); track author; let last = $last) {
+                    <span>
                       <span [innerHTML]="author"><span [innerHTML]="author"></span></span>
                       @if (!last) {
                         <span>; </span>

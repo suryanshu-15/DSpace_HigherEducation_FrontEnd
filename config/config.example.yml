@@ -495,7 +495,7 @@ vocabularies:
 
 # Default collection/community sorting order at Advanced search, Create/update community and collection when there are not a query.
 comcolSelectionSort:
-  sortField: 'dc.title'
+  sortField: 'dc.file.name'
   sortDirection: 'ASC'
 
 # Example of fallback collection for suggestions import

@@ -1,7 +1,76 @@
 @import '../../../../../../../styles/variables';
 
 .item-list-supervision {
-    a {
-        cursor: pointer;
-    }
+  
+  a {
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .row {
+    transition: all 0.25s ease;
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+
+  /* 🔥 Card hover effect */
+  .row:hover {
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+  }
+
+  /* 🔥 Title → File Number */
+  .item-list-title {
+    font-size: 1.05rem;
+    color: #2c3e50;
+    font-weight: 600;
+  }
+
+  /* 🔥 File Name */
+  .text-muted {
+    font-size: 0.9rem;
+    color: #6c757d !important;
+  }
+
+  /* 🔥 Metadata rows */
+  .file-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  /* 🔥 Tag-style labels */
+  .file-tag {
+    background: #eef3ff;
+    color: #3b5bdb;
+    font-size: 0.75rem;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+
+  /* 🔥 Year badge */
+  .file-year {
+    background: #e6f4ea;
+    color: #2e7d32;
+    font-size: 0.75rem;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+
+  /* 🔥 Abstract */
+  .item-list-abstract {
+    font-size: 0.85rem;
+    color: #495057;
+    margin-top: 6px;
+  }
+
+  /* 🔥 Badges spacing */
+  ds-badges {
+    margin-bottom: 4px;
+  }
 }

@@ -92,28 +92,29 @@ export class FullItemPageComponent extends ItemPageComponent implements OnInit, 
   fromSubmissionObject = false;
   subs = [];
 
-  private keyToLabel: Record<string, string> = {
-    'dc.contributor.author': 'Department',
-    'dc.title': 'Section',
-    'dc.title.alternative': 'File Number',
-    'dc.publisher': 'File Name',
-    'dc.date.issued': 'File Year',
-    'dc.relation.ispartofseries': 'Case Number',
-    'dc.identifier.citation': 'Respondent',
-    'dc.identifier': 'Petitioner',
-  };
+ private keyToLabel: Record<string, string> = {
+  'dc.filenumber': 'File Number',
+  'dc.file.name': 'File Name',
+  'dc.file.year': 'File Year',
+  'dc.case.number': 'Case Number',
+  'dc.subject.matter': 'Case Matter',
+  'dc.name.petitioner': 'Petitioner',
+  'dc.name.respondent': 'Respondent',
+  'dc.district': 'District',
+  'dc.institution': 'Institution'
+};
 
-  // 🔹 Desired display order
   private sortOrder = [
-    'dc.contributor.author',
-    'dc.title',
-    'dc.title.alternative',
-    'dc.publisher',
-    'dc.date.issued',
-    'dc.relation.ispartofseries',
-    'dc.identifier.citation',
-    'dc.identifier'
-  ];
+  'dc.filenumber',
+  'dc.file.name',
+  'dc.file.year',
+  'dc.case.number',
+  'dc.subject.matter',
+  'dc.name.petitioner',
+  'dc.name.respondent',
+  'dc.district',
+  'dc.institution'
+];
 
   constructor(
     protected route: ActivatedRoute,

@@ -66,7 +66,7 @@ import { SectionModelComponent } from '../models/section.model';
 import { SectionDataObject } from '../models/section-data.model';
 import { SectionsService } from '../sections.service';
 import { SectionFormOperationsService } from './section-form-operations.service';
-
+import { JsonPatchOperationsBuilder } from '../../../core/json-patch/builder/json-patch-operations-builder';
 // ── NEW IMPORTS ────────────────────────────────────────────────────────────────
 import {
   SectionInstitutionComponent,
@@ -123,6 +123,7 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
     protected submissionObjectService: SubmissionObjectDataService,
     protected objectCache: ObjectCacheService,
     protected requestService: RequestService,
+    protected operationsBuilder: JsonPatchOperationsBuilder,
     @Inject('collectionIdProvider') public injectedCollectionId: string,
     @Inject('sectionDataProvider') public injectedSectionData: SectionDataObject,
     @Inject('submissionIdProvider') public injectedSubmissionId: string,
@@ -293,40 +294,42 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
     );
   }
 
-  // ── NEW: called when SectionInstitutionComponent emits a value ─────────────
-  /**
-   * Receives the cascading selection from ds-section-institution and writes
-   * the stored value into DSpace metadata via the submission store.
-   *
-   * Stored in dc.contributor.author — change the field name below if you
-   * configure a dedicated custom metadata field for Section/Institution.
-   */
   onSectionInstitutionChange(value: SectionInstitutionValue): void {
-    this.sectionInstitutionValue = value;
+  this.sectionInstitutionValue = value;
+  if (!value) return;
 
-    // Find the dc.contributor.author field model in the form
-    // and update its value directly — this is the safest DSpace 7 approach
-    // because it goes through the existing form change pipeline
-    if (!this.formModel) { return; }
+  const mapping: { field: string; val: string | undefined }[] = [
+    { field: 'dc.branch',        val: value.branchLabel },
+    // { field: 'dc.subtype',       val: value.subTypeLabel },
+    { field: 'dc.district',      val: value.district },
+    { field: 'dc.institution',   val: value.institutionLabel },
+    // { field: 'dc.display',       val: value.displayValue },
+    // { field: 'dc.combined',      val: value.storedValue },
+  ];
 
-    const authorGroup = this.formModel.find(
-      (m: any) => m.group?.some((g: any) => g.name === 'dc.contributor.author')
-        || (m as any).name === 'dc.contributor.author'
-    ) as any;
+  mapping
+    .filter(m => m.val !== undefined && m.val !== null && m.val !== '')
+    .forEach(m => {
+      const path = this.pathCombiner.getPath(m.field);
 
-    if (authorGroup) {
-      // Find the actual input field inside the group
-      const authorField = authorGroup.group
-        ? authorGroup.group.find((g: any) => g.name === 'dc.contributor.author')
-        : authorGroup;
+      // ✅ CORRECT: wrap in an ARRAY — DSpace expects MetadataValueRest[]
+      this.operationsBuilder.add(
+        path,
+        [                          // <-- array wrapping is the fix
+          {
+            value: m.val,
+            language: null,
+            authority: null,
+            confidence: -1,
+            place: 0,
+          }
+        ],
+        true                       // <-- true = value is already an array
+      );
+    });
 
-      if (authorField) {
-        authorField.value = value.storedValue;
-        this.cdr.detectChanges();
-        this.submissionService.dispatchSave(this.submissionId);
-      }
-    }
-  }
+  this.submissionService.dispatchSave(this.submissionId);
+}
 
   onChange(event: DynamicFormControlEvent): void {
     this.formOperationsService.dispatchOperationsFromEvent(
