@@ -94,7 +94,7 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
   private searchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
   selectedChildSubType: string = '';
-childSubTypes: SubType[] = [];
+  childSubTypes: SubType[] = [];
 
   // ── Base API URL — update this to match your DSpace REST base URL ──────────
   private readonly API = `${CURRENT_API_URL}/api/hed`;
@@ -169,7 +169,7 @@ childSubTypes: SubType[] = [];
     this.isLoadingInstitutions = true;
     const subTypeToUse = this.selectedChildSubType || this.selectedSubType;
 
-const params: any = { sub_type: subTypeToUse };
+    const params: any = { sub_type: subTypeToUse };
     if (this.selectedDistrict) { params.district = this.selectedDistrict; }
     if (this.searchQuery) { params.q = this.searchQuery; }
 
@@ -186,24 +186,24 @@ const params: any = { sub_type: subTypeToUse };
   }
 
   onChildSubTypeChange(): void {
-  this.selectedDistrict = '';
-  this.selectedInstitution = '';
-  this.searchQuery = '';
-  this.institutions = [];
+    this.selectedDistrict = '';
+    this.selectedInstitution = '';
+    this.searchQuery = '';
+    this.institutions = [];
 
-  this.showInstitutionDropdown = true;
-  this.loadInstitutions(); // now based on child subtype
+    this.showInstitutionDropdown = true;
+    this.loadInstitutions(); // now based on child subtype
 
-  this.emitValue();
-}
+    this.emitValue();
+  }
 
   setupSearch(): void {
     this.searchSubject.pipe(
       debounceTime(300),
       distinctUntilChanged(),
       switchMap((query) => {
-        const params: any = { sub_type: this.selectedSubType, q: query };
-        if (this.selectedDistrict) { params.district = this.selectedDistrict; }
+        const subTypeToUse = this.selectedChildSubType || this.selectedSubType;
+        const params: any = { sub_type: subTypeToUse, q: query }; if (this.selectedDistrict) { params.district = this.selectedDistrict; }
         return this.http.get<Institution[]>(`${this.API}/institutions`, { params });
       }),
       takeUntil(this.destroy$),
@@ -214,14 +214,14 @@ const params: any = { sub_type: subTypeToUse };
   }
 
   get groupedChildSubTypes(): { group: string; items: SubType[] }[] {
-  const groups: { [key: string]: SubType[] } = {};
-  this.childSubTypes.forEach(st => {
-    const g = st.group_name || 'General';
-    if (!groups[g]) groups[g] = [];
-    groups[g].push(st);
-  });
-  return Object.keys(groups).map(g => ({ group: g, items: groups[g] }));
-}
+    const groups: { [key: string]: SubType[] } = {};
+    this.childSubTypes.forEach(st => {
+      const g = st.group_name || 'General';
+      if (!groups[g]) groups[g] = [];
+      groups[g].push(st);
+    });
+    return Object.keys(groups).map(g => ({ group: g, items: groups[g] }));
+  }
 
   // ── Event handlers ─────────────────────────────────────────────────────────
 
@@ -243,47 +243,47 @@ const params: any = { sub_type: subTypeToUse };
   }
 
   onSubTypeChange(): void {
-  this.selectedDistrict = '';
-  this.selectedInstitution = '';
-  this.selectedChildSubType = '';
-  this.searchQuery = '';
-  this.institutions = [];
-  this.filteredInstitutions = [];
+    this.selectedDistrict = '';
+    this.selectedInstitution = '';
+    this.selectedChildSubType = '';
+    this.searchQuery = '';
+    this.institutions = [];
+    this.filteredInstitutions = [];
 
-  const subType = this.subTypes.find(s => s.code === this.selectedSubType);
+    const subType = this.subTypes.find(s => s.code === this.selectedSubType);
 
-  // 🔥 KEY CHANGE
-  if (subType?.has_children) {
-    // Load college types as child
-    this.loadChildSubTypes();
-    this.showInstitutionDropdown = false;
-    return;
+    // 🔥 KEY CHANGE
+    if (subType?.has_children) {
+      // Load college types as child
+      this.loadChildSubTypes();
+      this.showInstitutionDropdown = false;
+      return;
+    }
+
+    // existing logic
+    const hasInstitutionList = ['GC', 'NGC_488', 'NGC_662', 'SC', 'PVT', 'SPU', 'PU']
+      .includes(this.selectedSubType);
+
+    this.showInstitutionDropdown = hasInstitutionList;
+
+    if (hasInstitutionList) {
+      this.loadInstitutions();
+    }
+
+    this.emitValue();
   }
-
-  // existing logic
-  const hasInstitutionList = ['GC', 'NGC_488', 'NGC_662', 'SC', 'PVT', 'SPU', 'PU']
-    .includes(this.selectedSubType);
-
-  this.showInstitutionDropdown = hasInstitutionList;
-
-  if (hasInstitutionList) {
-    this.loadInstitutions();
+  loadChildSubTypes(): void {
+    this.http.get<SubType[]>(`${this.API}/subtypes`, {
+      params: { branch: 'college' } // 🔥 Always load college types
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.childSubTypes = data;
+        },
+        error: () => { }
+      });
   }
-
-  this.emitValue();
-}
-loadChildSubTypes(): void {
-  this.http.get<SubType[]>(`${this.API}/subtypes`, {
-    params: { branch: 'college' } // 🔥 Always load college types
-  })
-  .pipe(takeUntil(this.destroy$))
-  .subscribe({
-    next: (data) => {
-      this.childSubTypes = data;
-    },
-    error: () => {}
-  });
-}
 
   onDistrictChange(): void {
     this.selectedInstitution = '';
@@ -356,6 +356,7 @@ loadChildSubTypes(): void {
   }
 
   needsDistrict(): boolean {
-    return ['GC', 'NGC_488', 'NGC_662', 'SC', 'PVT'].includes(this.selectedSubType);
+    const type = this.selectedChildSubType || this.selectedSubType;
+    return ['GC', 'NGC_488', 'NGC_662', 'SC', 'PVT'].includes(type);
   }
 }

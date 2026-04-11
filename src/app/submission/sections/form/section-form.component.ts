@@ -83,7 +83,6 @@ import {
   imports: [
     FormComponent,
     ThemedLoadingComponent,
-    // ── ADD THIS ──────────────────────────────────────
     SectionInstitutionComponent,
   ],
   standalone: true,
@@ -95,7 +94,7 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
   public isUpdating = false;
   public isLoading = true;
 
-  // ── NEW: tracks the selected institution value ─────────────────────────────
+  // ── tracks the selected institution value ──────────────────────────────────
   public sectionInstitutionValue: SectionInstitutionValue | null = null;
 
   protected fieldsOnTheirWayToBeRemoved: Map<string, number[]> = new Map();
@@ -107,6 +106,24 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
   protected subs: Subscription[] = [];
   protected submissionObject: SubmissionObject;
   protected isSectionReadonly = false;
+
+  /**
+   * Fields that are ALWAYS hidden — populated by the institution selector,
+   * never shown directly in the form UI.
+   */
+  private readonly ALWAYS_HIDDEN_FIELDS = [
+    'dc_branch',
+    'dc_district',
+    'dc_institution',
+  ];
+
+  /**
+   * Fields shown only when Case Status = "yes", hidden otherwise.
+   */
+  private readonly CASE_STATUS_CONTROLLED_FIELDS = [
+    'dc_petitioner',
+    'dc_respondent',
+  ];
 
   @ViewChild('formRef') private formRef: FormComponent;
 
@@ -156,6 +173,12 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
           this.subscriptions();
           this.isLoading = false;
           this.cdr.detectChanges();
+
+          // Apply visibility rules after the form model is ready.
+          // Always-hidden fields: never visible in the form UI.
+          this.setFieldsVisibility(this.ALWAYS_HIDDEN_FIELDS, false);
+          // Petitioner & Respondent: derive initial state from stored section data.
+          this.reApplyCaseStatusVisibility(sectionData);
         }
       });
   }
@@ -255,6 +278,9 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
         this.checksForErrors(errors);
         this.isUpdating = false;
         this.cdr.detectChanges();
+        // Re-apply visibility after every form rebuild
+        this.setFieldsVisibility(this.ALWAYS_HIDDEN_FIELDS, false);
+        this.reApplyCaseStatusVisibility(sectionData);
       } else if (isNotEmpty(errors) || isNotEmpty(this.sectionData.errorsToShow)) {
         this.checksForErrors(errors);
       }
@@ -295,54 +321,187 @@ export class SubmissionSectionFormComponent extends SectionModelComponent {
   }
 
   onSectionInstitutionChange(value: SectionInstitutionValue): void {
-  this.sectionInstitutionValue = value;
-  if (!value) return;
+    this.sectionInstitutionValue = value;
+    if (!value) return;
 
-  const mapping: { field: string; val: string | undefined }[] = [
-    { field: 'dc.branch',        val: value.branchLabel },
-    // { field: 'dc.subtype',       val: value.subTypeLabel },
-    { field: 'dc.district',      val: value.district },
-    { field: 'dc.institution',   val: value.institutionLabel },
-    // { field: 'dc.display',       val: value.displayValue },
-    // { field: 'dc.combined',      val: value.storedValue },
-  ];
+    const mapping: { field: string; val: string | undefined }[] = [
+      { field: 'dc.branch', val: value.branchLabel },
+      { field: 'dc.district', val: value.district },
+      { field: 'dc.institution', val: value.institutionLabel },
+    ];
 
-  mapping
-    .filter(m => m.val !== undefined && m.val !== null && m.val !== '')
-    .forEach(m => {
-      const path = this.pathCombiner.getPath(m.field);
+    mapping
+      .filter(m => m.val !== undefined && m.val !== null && m.val !== '')
+      .forEach(m => {
+        const path = this.pathCombiner.getPath(m.field);
+        this.operationsBuilder.add(
+          path,
+          [
+            {
+              value: m.val,
+              language: null,
+              authority: null,
+              confidence: -1,
+              place: 0,
+            }
+          ],
+          true
+        );
+      });
 
-      // ✅ CORRECT: wrap in an ARRAY — DSpace expects MetadataValueRest[]
-      this.operationsBuilder.add(
-        path,
-        [                          // <-- array wrapping is the fix
-          {
-            value: m.val,
-            language: null,
-            authority: null,
-            confidence: -1,
-            place: 0,
-          }
-        ],
-        true                       // <-- true = value is already an array
-      );
-    });
-
-  this.submissionService.dispatchSave(this.submissionId);
-}
+    this.submissionService.dispatchSave(this.submissionId);
+  }
 
   onChange(event: DynamicFormControlEvent): void {
+    const metadata = this.formOperationsService.getFieldPathSegmentedFromChangeEvent(event);
+    const value = this.formOperationsService.getFieldValueFromChangeEvent(event);
+
+    console.log(metadata, value);
+
+    if (metadata === 'dc.case.status') {
+      this.handleCaseStateToggle(value);
+    }
+
     this.formOperationsService.dispatchOperationsFromEvent(
       this.pathCombiner,
       event,
       this.previousValue,
-      this.hasStoredValue(this.formBuilderService.getId(event.model), this.formOperationsService.getArrayIndexFromEvent(event)));
-    const metadata = this.formOperationsService.getFieldPathSegmentedFromChangeEvent(event);
-    const value = this.formOperationsService.getFieldValueFromChangeEvent(event);
+      this.hasStoredValue(
+        this.formBuilderService.getId(event.model),
+        this.formOperationsService.getArrayIndexFromEvent(event)
+      )
+    );
 
-    if ((environment.submission.autosave.metadata.indexOf(metadata) !== -1 && isNotEmpty(value)) || this.hasRelatedCustomError(metadata)) {
-      this.submissionService.dispatchSave(this.submissionId);
-    }
+    this.submissionService.dispatchSave(this.submissionId);
+  }
+
+  handleCaseStateToggle(value: any): void {
+    const actualValue = value?.value || value;
+    const show = (typeof actualValue === 'string')
+      ? actualValue.trim().toLowerCase() === 'yes'
+      : false;
+
+    console.log('Case status toggle → show petitioner/respondent:', show);
+    this.setFieldsVisibility(this.CASE_STATUS_CONTROLLED_FIELDS, show);
+  }
+
+  /**
+   * Re-derive the Case Status from already-stored section data and apply
+   * petitioner/respondent visibility accordingly.
+   * Called on initial load and after every form rebuild.
+   */
+  private reApplyCaseStatusVisibility(sectionData: WorkspaceitemSectionFormObject): void {
+    const statusValues: any[] = (sectionData as any)['dc.case.status'];
+    const currentStatus = Array.isArray(statusValues) && statusValues.length > 0
+      ? statusValues[0]?.value
+      : null;
+    const show = typeof currentStatus === 'string'
+      && currentStatus.trim().toLowerCase() === 'yes';
+    this.setFieldsVisibility(this.CASE_STATUS_CONTROLLED_FIELDS, show);
+  }
+
+  /**
+   * Core visibility engine — TWO-PRONGED approach.
+   *
+   * ① field.hidden = !visible
+   *    Keeps ng-dynamic-forms semantics correct: hidden fields are excluded
+   *    from validation and JSON-patch submission payloads.
+   *
+   * ② field.layout.element.host — Bootstrap `d-none`
+   *    DSpace's form template reads this string to compose the host element's
+   *    CSS classes on every render. Replacing the formModel array reference
+   *    (`[...this.formModel]`) forces OnPush re-render on FormComponent so it
+   *    picks up the updated class string and hides/shows the field via CSS.
+   *
+   * Both prongs together are needed because OnPush only re-checks @Input
+   * bindings; mutating a plain boolean property on a nested object reference
+   * alone is not enough to trigger a re-render.
+   */
+  private setFieldsVisibility(fieldIds: string[], visible: boolean): void {
+    if (!this.formModel) return;
+
+    const applyToField = (field: any) => {
+      // ── ① Semantic hidden flag ────────────────────────────────────────────
+      field.hidden = !visible;
+
+      // ── ② CSS class on the host element ──────────────────────────────────
+      if (!field.layout) {
+        field.layout = { element: {}, grid: {} };
+      }
+      if (!field.layout.element) {
+        field.layout.element = {};
+      }
+
+      // Remove any prior d-none we set, then re-add if we are hiding.
+      const existing: string = field.layout.element.host || '';
+      const cleaned = existing.replace(/\bd-none\b/g, '').replace(/\s{2,}/g, ' ').trim();
+      field.layout.element.host = visible
+        ? cleaned
+        : (cleaned ? `${cleaned} d-none` : 'd-none');
+
+      // Clear the value when hiding so stale data is not submitted.
+      if (!visible) {
+        field.value = null;
+      }
+    };
+
+    const traverse = (fields: any[]) => {
+      if (!Array.isArray(fields)) return;
+
+      fields.forEach(field => {
+
+        // ✅ HANDLE ARRAY (THIS IS YOUR MISSING PIECE)
+        if (field.type === 'ARRAY') {
+
+          const hasTargetField = field.groups?.some((group: any) =>
+            group.group?.some((child: any) => {
+              const key = child.metadata || child.id || child.name;
+              return fieldIds.includes(key);
+            })
+          );
+
+          if (hasTargetField) {
+            console.log('🔥 HIDING ARRAY:', field.id);
+
+            applyToField(field); // 👈 THIS hides label + add more
+          }
+        }
+
+        // ✅ HANDLE GROUP
+        if (field.type === 'GROUP' && Array.isArray(field.group)) {
+
+          const hasTargetField = field.group.some((child: any) => {
+            const key = child.metadata || child.id || child.name;
+            return fieldIds.includes(key);
+          });
+
+          if (hasTargetField) {
+            applyToField(field);
+          }
+        }
+
+        // recursion
+        if (Array.isArray(field.group)) {
+          traverse(field.group);
+        }
+
+        if (Array.isArray(field.groups)) {
+          field.groups.forEach((g: any) => {
+            if (Array.isArray(g.group)) {
+              traverse(g.group);
+            }
+          });
+        }
+
+      });
+    };
+
+    traverse(this.formModel);
+
+    // ── Replace the array reference to trigger OnPush re-render ──────────────
+    this.formModel = [...this.formModel];
+    this.cdr.markForCheck();
+    this.cdr.detectChanges();
   }
 
   private hasRelatedCustomError(medatata): boolean {

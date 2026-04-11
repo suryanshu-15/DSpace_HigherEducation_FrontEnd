@@ -57,6 +57,22 @@
   </div>
   }
 
+  <!-- ── Step 4: District filter ───────────────────────────── -->
+  @if (selectedSubType && needsDistrict()) {
+  <div class="ds-si-row ds-si-animate">
+    <label class="ds-si-step-label">District</label>
+
+    <select class="ds-si-select" [(ngModel)]="selectedDistrict" (ngModelChange)="onDistrictChange()">
+
+      <option value="" disabled>— Select district —</option>
+
+      @for (d of districts; track d.code) {
+      <option [value]="d.code">{{ d.name }}</option>
+      }
+    </select>
+  </div>
+  }
+
   <!-- ── Step 4: Institution autocomplete ──────────────────────────────── -->
   @if (showInstitutionDropdown) {
   <div class="ds-si-row ds-si-animate">
@@ -76,7 +92,9 @@
         <li class="ds-si-dropdown-item" (mousedown)="onInstitutionSelect(inst)">
           <span class="ds-si-inst-name">{{ inst.name }}</span>
           @if (inst.district_code) {
-          <span class="ds-si-inst-district">{{ inst.district_code }}</span>
+          <span class="ds-si-inst-district">
+            {{ districts | dsFind: 'code' : inst.district_code : 'name' }}
+          </span>
           }
         </li>
         }
@@ -98,9 +116,9 @@
       {{ institutions | dsFind: 'code' : selectedInstitution : 'name' }}
     </span>
     <span class="ds-si-sep">›</span>
-  <span class="ds-si-crumb">
-    {{ childSubTypes | dsFind: 'code' : selectedChildSubType : 'label' }}
-  </span>
+    <span class="ds-si-crumb">
+      {{ childSubTypes | dsFind: 'code' : selectedChildSubType : 'label' }}
+    </span>
     }
   </div>
   }
