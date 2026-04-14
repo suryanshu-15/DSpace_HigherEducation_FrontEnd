@@ -17,6 +17,7 @@ import {
 } from 'rxjs/operators';
 import { DsFindPipe } from './ds-find.pipe';
 import { CURRENT_API_URL } from 'src/app/api-urls';
+import { ChangeDetectorRef } from '@angular/core';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -99,7 +100,7 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
   // ── Base API URL — update this to match your DSpace REST base URL ──────────
   private readonly API = `${CURRENT_API_URL}/api/hed`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
   // ── Lifecycle ──────────────────────────────────────────────────────────────
 
@@ -107,6 +108,7 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
     this.loadBranches();
     this.loadDistricts();
     this.setupSearch();
+    this.cdr.detectChanges();
   }
 
   ngOnDestroy(): void {
@@ -124,6 +126,7 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
         next: (data) => {
           this.branches = data;
           this.isLoadingBranches = false;
+          this.cdr.detectChanges();
         },
         error: () => {
           // Fallback static data if API not yet ready
@@ -159,6 +162,7 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
         next: (data) => {
           this.subTypes = data;
           this.isLoadingSubTypes = false;
+          this.cdr.detectChanges();
         },
         error: () => { this.isLoadingSubTypes = false; },
       });
@@ -180,6 +184,7 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
           this.institutions = data;
           this.filteredInstitutions = data;
           this.isLoadingInstitutions = false;
+          this.cdr.detectChanges();
         },
         error: () => { this.isLoadingInstitutions = false; },
       });
@@ -280,6 +285,7 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.childSubTypes = data;
+          this.cdr.detectChanges();
         },
         error: () => { }
       });

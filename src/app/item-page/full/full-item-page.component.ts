@@ -97,11 +97,12 @@ export class FullItemPageComponent extends ItemPageComponent implements OnInit, 
   'dc.file.name': 'File Name',
   'dc.file.year': 'File Year',
   'dc.case.number': 'Case Number',
-  'dc.case.matter': 'Case Matter',
+  'dc.case.matter': 'Subject/Case Matter',
   'dc.name.petitioner': 'Petitioner',
   'dc.name.respondent': 'Respondent',
   'dc.district': 'District',
-  'dc.institution': 'Institution'
+  'dc.institution': 'Institution',
+  'dc.comment': 'Description'
 };
 
   private sortOrder = [
