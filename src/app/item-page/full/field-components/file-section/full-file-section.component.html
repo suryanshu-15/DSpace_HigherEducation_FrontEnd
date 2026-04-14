@@ -1,0 +1,81 @@
+<ds-metadata-field-wrapper [label]="label | translate">
+  <!-- Originals Section -->
+  <div *ngVar="(originals$ | async)?.payload as originals">
+    @if (hasValuesInBundle(originals)) {
+    <div>
+      <h3 class="h5 simple-view-element-header mb-3">
+        {{ "item.page.filesection.original.bundle" | translate }}
+      </h3>
+      @if (originals?.page?.length > 0) {
+      <ds-pagination [hideGear]="true" [hidePagerWhenSinglePage]="true" [paginationOptions]="originalOptions"
+        [collectionSize]="originals?.totalElements" [retainScrollPosition]="true">
+        @for (file of originals?.page; track file) {
+        <div class="file-section card shadow-sm mb-3 border-0 rounded-lg p-3">
+          <div class="row align-items-center">
+
+            <!-- File Info -->
+            <div class="col-md-9 text-start">
+              <dl class="row mb-0">
+                <dt class="col-sm-4 text-muted">
+                  {{ "item.page.filesection.name" | translate }}
+                </dt>
+                <dd class="col-sm-8 fw-semibold">
+                  {{ dsoNameService.getName(file) }}
+                </dd>
+
+                <dt class="col-sm-4 text-muted">
+                  {{ "item.page.filesection.size" | translate }}
+                </dt>
+                <dd class="col-sm-8">
+                  {{ file.sizeBytes | dsFileSize }}
+                </dd>
+
+                <dt class="col-sm-4 text-muted">
+                  {{ "item.page.filesection.format" | translate }}
+                </dt>
+                <dd class="col-sm-8">
+                  {{ (file.format | async)?.payload?.description }}
+                </dd>
+
+                @if (file.hasMetadata('dc.description')) {
+                <dt class="col-sm-4 text-muted">
+                  {{ "item.page.filesection.description" | translate }}
+                </dt>
+                <dd class="col-sm-8">
+                  {{ file.firstMetadataValue("dc.description") }}
+                </dd>
+                }
+              </dl>
+            </div>
+
+            <!-- Buttons -->
+            <div class="col-md-3 text-md-end mt-3 mt-md-0">
+              <div class="d-flex flex-wrap gap-2 justify-content-md-end">
+                <!-- Download Button -->
+                <!-- <ds-file-download-link [showIcon]="true" [bitstream]="file" [item]="item"
+                  cssClasses="btn btn-primary px-3 rounded-pill shadow-sm">
+                  <span class="d-none d-md-inline">
+                    {{ "item.page.filesection.download" | translate }}
+                  </span>
+                </ds-file-download-link> -->
+
+                <!-- View Button -->
+                <button type="button" class="btn btn-success px-3 rounded-pill shadow-sm" (click)="onViewFile(file)">
+                  <i class="fas fa-eye me-1"></i>
+                  <span class="d-none d-md-inline">
+                    {{ "item.page.filesection.view" | translate }}
+                  </span>
+                </button>
+                
+              </div>
+            </div>
+
+          </div>
+        </div>
+        }
+      </ds-pagination>
+      }
+    </div>
+    }
+  </div>
+</ds-metadata-field-wrapper>

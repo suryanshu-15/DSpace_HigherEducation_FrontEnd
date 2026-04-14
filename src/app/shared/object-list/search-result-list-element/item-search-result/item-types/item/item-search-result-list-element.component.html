@@ -1,0 +1,69 @@
+<div class="row py-2 border-bottom">
+  @if (showThumbnails) {
+    <div class="col-3 col-md-2 d-flex align-items-start">
+      @if (linkType !== linkTypes.None) {
+        <a [target]="(linkType === linkTypes.ExternalLink) ? '_blank' : '_self'"
+           [attr.rel]="(linkType === linkTypes.ExternalLink) ? 'noopener noreferrer' : null"
+           [routerLink]="[itemPageRoute, 'full']"
+           class="dont-break-out d-block p-1">
+        </a>
+      }
+    </div>
+  }
+
+  <div [ngClass]="showThumbnails ? 'col-9' : 'col-12'" class="ps-3">
+    
+    <!-- Badges -->
+    <div class="d-flex align-items-center mb-1">
+      @if (showLabel) {
+        <ds-badges [object]="dso" [context]="context" [showAccessStatus]="true"></ds-badges>
+      }
+    </div>
+
+    @if (object !== undefined && object !== null) {
+      <ds-truncatable [id]="dso.id" class="d-block">
+
+        <!-- 🔥 TITLE → FILE NUMBER -->
+        @if (linkType !== linkTypes.None) {
+          <a [target]="(linkType === linkTypes.ExternalLink) ? '_blank' : '_self'"
+             [attr.rel]="(linkType === linkTypes.ExternalLink) ? 'noopener noreferrer' : null"
+             [routerLink]="[itemPageRoute, 'full']"
+             class="lead item-list-title dont-break-out fw-semibold mb-1 d-inline-block"
+             [innerHTML]="firstMetadataValue('dc.filenumber')"
+             role="link">
+          </a>
+        }
+
+        @if (linkType === linkTypes.None) {
+          <span class="lead item-list-title dont-break-out fw-semibold mb-1 d-inline-block"
+                [innerHTML]="firstMetadataValue('dc.filenumber')">
+          </span>
+        }
+
+        <!-- 🔥 FILE NAME -->
+        @if (dso.firstMetadataValue('dc.file.name')) {
+          <div class="text-muted small mb-1">
+            {{ dso.firstMetadataValue('dc.file.name') }}
+          </div>
+        }
+
+        <!-- 🔥 FILE YEAR -->
+        @if (dso.firstMetadataValue('dc.file.year')) {
+          <div class="text-muted small mb-1">
+            Year: {{ dso.firstMetadataValue('dc.file.year') }}
+          </div>
+        }
+
+        <!-- 🔥 OPTIONAL: KEEP ABSTRACT -->
+        @if (dso.firstMetadataValue('dc.description.abstract')) {
+          <div class="item-list-abstract mt-2">
+            <ds-truncatable-part [id]="dso.id" [minLines]="3">
+              <span [innerHTML]="firstMetadataValue('dc.description.abstract')"></span>
+            </ds-truncatable-part>
+          </div>
+        }
+
+      </ds-truncatable>
+    }
+  </div>
+</div>

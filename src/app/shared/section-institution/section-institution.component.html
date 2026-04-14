@@ -1,0 +1,126 @@
+<div class="ds-section-institution">
+
+  <!-- ── Row label ──────────────────────────────────────────────────────── -->
+  <label class="ds-si-label">Section / Institution</label>
+
+  <!-- ── Step 1: Branch ────────────────────────────────────────────────── -->
+  <div class="ds-si-row">
+    <label class="ds-si-step-label">Branch</label>
+    <select class="ds-si-select" [(ngModel)]="selectedBranch" (ngModelChange)="onBranchChange()"
+      [disabled]="isLoadingBranches">
+      <option value="" disabled>— Select branch —</option>
+      @for (branch of branches; track branch.code) {
+      <option [value]="branch.code">{{ branch.label }}</option>
+      }
+    </select>
+    @if (isLoadingBranches) {
+    <span class="ds-si-spinner">Loading…</span>
+    }
+  </div>
+
+  <!-- ── Step 2: Sub-type (shown after branch selected) ────────────────── -->
+  @if (selectedBranch && subTypes.length > 0) {
+  <div class="ds-si-row ds-si-animate">
+    <label class="ds-si-step-label">Sub-type</label>
+    <select class="ds-si-select" [(ngModel)]="selectedSubType" (ngModelChange)="onSubTypeChange()"
+      [disabled]="isLoadingSubTypes">
+      <option value="" disabled>— Select sub-type —</option>
+      @for (group of groupedSubTypes; track group.group) {
+      <optgroup [label]="group.group">
+        @for (item of group.items; track item.code) {
+        <option [value]="item.code">{{ item.label }}</option>
+        }
+      </optgroup>
+      }
+    </select>
+    @if (isLoadingSubTypes) {
+    <span class="ds-si-spinner">Loading…</span>
+    }
+  </div>
+  }
+
+  <!-- ── Step 3: District filter (only for college subtypes) ───────────── -->
+  @if (selectedSubType && childSubTypes.length > 0) {
+  <div class="ds-si-row ds-si-animate">
+    <label class="ds-si-step-label">College Type</label>
+    <select class="ds-si-select" [(ngModel)]="selectedChildSubType" (ngModelChange)="onChildSubTypeChange()">
+
+      <option value="" disabled>— Select college type —</option>
+
+      @for (group of groupedChildSubTypes; track group.group) {
+      <optgroup [label]="group.group">
+        @for (item of group.items; track item.code) {
+        <option [value]="item.code">{{ item.label }}</option>
+        }
+        }
+    </select>
+  </div>
+  }
+
+  <!-- ── Step 4: District filter ───────────────────────────── -->
+  @if (selectedSubType && needsDistrict()) {
+  <div class="ds-si-row ds-si-animate">
+    <label class="ds-si-step-label">District</label>
+
+    <select class="ds-si-select" [(ngModel)]="selectedDistrict" (ngModelChange)="onDistrictChange()">
+
+      <option value="" disabled>— Select district —</option>
+
+      @for (d of districts; track d.code) {
+      <option [value]="d.code">{{ d.name }}</option>
+      }
+    </select>
+  </div>
+  }
+
+  <!-- ── Step 4: Institution autocomplete ──────────────────────────────── -->
+  @if (showInstitutionDropdown) {
+  <div class="ds-si-row ds-si-animate">
+    <label class="ds-si-step-label">Institution</label>
+    <div class="ds-si-autocomplete">
+      <input class="ds-si-input" type="text" placeholder="Type to search institution…" [(ngModel)]="searchQuery"
+        (ngModelChange)="onSearchChange()" (focus)="filteredInstitutions = institutions" autocomplete="off" />
+      @if (selectedInstitution) {
+      <button class="ds-si-clear" type="button" (click)="clearInstitution()">✕</button>
+      }
+      @if (isLoadingInstitutions) {
+      <span class="ds-si-spinner">Loading…</span>
+      }
+      @if (filteredInstitutions.length > 0 && !selectedInstitution) {
+      <ul class="ds-si-dropdown-list">
+        @for (inst of filteredInstitutions; track inst.code) {
+        <li class="ds-si-dropdown-item" (mousedown)="onInstitutionSelect(inst)">
+          <span class="ds-si-inst-name">{{ inst.name }}</span>
+          @if (inst.district_code) {
+          <span class="ds-si-inst-district">
+            {{ districts | dsFind: 'code' : inst.district_code : 'name' }}
+          </span>
+          }
+        </li>
+        }
+      </ul>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- ── Summary breadcrumb ─────────────────────────────────────────────── -->
+  @if (selectedBranch && selectedSubType) {
+  <div class="ds-si-summary">
+    <span class="ds-si-crumb">{{ branches | dsFind: 'code' : selectedBranch : 'label' }}</span>
+    <span class="ds-si-sep">›</span>
+    <span class="ds-si-crumb">{{ subTypes | dsFind: 'code' : selectedSubType : 'label' }}</span>
+    @if (selectedInstitution) {
+    <span class="ds-si-sep">›</span>
+    <span class="ds-si-crumb ds-si-crumb-final">
+      {{ institutions | dsFind: 'code' : selectedInstitution : 'name' }}
+    </span>
+    <span class="ds-si-sep">›</span>
+    <span class="ds-si-crumb">
+      {{ childSubTypes | dsFind: 'code' : selectedChildSubType : 'label' }}
+    </span>
+    }
+  </div>
+  }
+
+</div>

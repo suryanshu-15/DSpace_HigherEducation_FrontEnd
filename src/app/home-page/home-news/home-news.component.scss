@@ -1,0 +1,28 @@
+:host {
+    display: block;
+}
+
+.display-3 {
+    word-break: break-word;
+}
+
+.home-news-content {
+  background-color: var(--ds-home-news-background-color);
+}
+
+a {
+  color: var(--ds-home-news-link-color);
+
+  &:hover {
+    color: var(--ds-home-news-link-hover-color);
+  }
+}
+
+img.rounded-circle {
+  border: 3px solid #007bff;
+  object-fit: cover;
+}
+.text-primary {
+  color: #007bff;
+}
+

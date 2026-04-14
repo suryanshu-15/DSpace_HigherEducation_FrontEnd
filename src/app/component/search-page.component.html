@@ -1,0 +1,89 @@
+<div class="container mt-4">
+  <div class="bg-white p-4 rounded shadow-sm border">
+    <h4 class="mb-4 text-primary border-bottom pb-2 text-center fw-bold">
+      Search Files
+    </h4>
+
+    <!-- Filter Form -->
+    <div class="row g-3 mb-3">
+      <div class="col-md-3">
+        <label class="form-label fw-semibold small">Department</label>
+        <input
+          type="text"
+          class="form-control form-control-sm border-primary-subtle shadow-sm"
+          [(ngModel)]="department"
+          (ngModelChange)="onDepartmentChange($event)"
+          placeholder="Enter Department"
+        />
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label fw-semibold small">Section</label>
+        <input
+          type="text"
+          class="form-control form-control-sm border-primary-subtle shadow-sm"
+          [(ngModel)]="section"
+          (ngModelChange)="onSectionChange($event)"
+          placeholder="Enter Section"
+        />
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label fw-semibold small">File Number</label>
+        <input
+          type="text"
+          class="form-control form-control-sm border-primary-subtle shadow-sm"
+          [(ngModel)]="fileNumber"
+          (ngModelChange)="onFilenumberChange($event)"
+          placeholder="Enter File Number"
+        />
+      </div>
+
+      <div class="col-md-3 d-flex align-items-end">
+        <button
+          class="btn btn-primary btn-sm w-100 shadow-sm"
+          (click)="applyFilters()"
+        >
+          <i class="fas fa-search me-1"></i> Search
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Results -->
+    <div *ngIf="filteredResults.length === 0" class="alert alert-warning text-center py-2 small">
+      No matching results found.
+    </div>
+
+    <div
+      *ngFor="let result of filteredResults"
+      class="card mb-3 border-0 shadow-sm search-result-card hover-shadow transition"
+    >
+      <div class="card-body py-3">
+        <h6 class="card-title text-primary fw-bold mb-2">
+          {{ result._embedded?.indexableObject?.metadata['dc.title']?.[0]?.value || 'Untitled' }}
+        </h6>
+        <p class="card-text small text-muted mb-0">
+          <strong>Department:</strong>
+          {{ result._embedded?.indexableObject?.metadata['dc.contributor.author']?.[0]?.value || 'N/A' }}<br>
+          <strong>Section:</strong>
+          {{ result._embedded?.indexableObject?.metadata['dc.title']?.[0]?.value || 'N/A' }}<br>
+          <strong>File Number:</strong>
+          {{ result._embedded?.indexableObject?.metadata['dc.title.alternative']?.[0]?.value || 'N/A' }}<br>
+          <strong>File Name:</strong> 
+          {{ result._embedded?.indexableObject?.metadata['dc.filename']?.[0]?.value || 'N/A' }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .search-result-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .search-result-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+</style>

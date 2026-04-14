@@ -1,0 +1,30 @@
+.file-view-container {
+  margin-top: 1rem;
+
+  .file-title {
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .file-preview {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.5rem;
+    background: #fafafa;
+    max-height: 80vh;
+    overflow: auto;
+
+    img, video {
+      max-width: 100%;
+    }
+
+    .pdf-viewer {
+      width: 100%;
+    }
+  }
+
+  .btn {
+    border-radius: 20px;
+    padding: 0.5rem 1.2rem;
+  }
+}
