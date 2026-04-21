@@ -93,28 +93,39 @@ export class FullItemPageComponent extends ItemPageComponent implements OnInit, 
   subs = [];
 
  private keyToLabel: Record<string, string> = {
-  'dc.filenumber': 'File Number',
-  'dc.file.name': 'File Name',
+   'dc.barcode': 'Barcode',
+   'dc.file.name': 'File Name',
+   'dc.filenumber': 'File Number',
+   'dc.case.status': 'Case Status',
+   'dc.case,nature': 'Case Nature',
   'dc.file.year': 'File Year',
   'dc.case.number': 'Case Number',
-  'dc.case.matter': 'Subject/Case Matter',
-  'dc.name.petitioner': 'Petitioner',
-  'dc.name.respondent': 'Respondent',
-  'dc.district': 'District',
-  'dc.institution': 'Institution',
-  'dc.comment': 'Description'
+  'dc.case.nature': 'Case Nature',
+  'dc.subject.matter': 'Subject/Case Matter',
+  'dc.petitioner': 'Petitioner',
+  'dc.respondent': 'Respondent',
+  'dc.case.district': 'Case District',
+  'dc.case.institution': 'Case Institution',
+  'dc.comment': 'Description',
+  'dc.branch': 'Branch',
 };
 
   private sortOrder = [
+    'dc.institution',
+    'dc.branch',
+    'dc.barcode',
+    'dc.file.name',
   'dc.filenumber',
-  'dc.file.name',
   'dc.file.year',
+ 'dc.case.status',
+ 'dc.case.nature',
   'dc.case.number',
-  'dc.case.matter',
-  'dc.name.petitioner',
-  'dc.name.respondent',
-  'dc.district',
-  'dc.institution'
+  'dc.subject.matter',
+  'dc.comment',
+  'dc.petitioner',
+  'dc.respondent',
+  'dc.case.district',
+  'dc.case.institution'
 ];
 
   constructor(

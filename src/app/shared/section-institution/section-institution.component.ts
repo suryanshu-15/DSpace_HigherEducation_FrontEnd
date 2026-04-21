@@ -279,7 +279,7 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
   }
   loadChildSubTypes(): void {
     this.http.get<SubType[]>(`${this.API}/subtypes`, {
-      params: { branch: 'college' } // 🔥 Always load college types
+      params: { parent: this.selectedSubType }
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
