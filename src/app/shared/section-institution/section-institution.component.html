@@ -39,7 +39,7 @@
   </div>
   }
 
-  <!-- ── Step 3: District filter (only for college subtypes) ───────────── -->
+  <!-- ── Step 3: College Type ───────────── -->
   @if (selectedSubType && childSubTypes.length > 0) {
   <div class="ds-si-row ds-si-animate">
     <label class="ds-si-step-label">College Type</label>
@@ -57,7 +57,24 @@
   </div>
   }
 
-  <!-- ── Step 4: District filter ───────────────────────────── -->
+  <!-- ── Step 4: Grant Order Type (for Non-Government Aided) ───────────── -->
+  @if (selectedChildSubType && subChildSubTypes.length > 0) {
+  <div class="ds-si-row ds-si-animate">
+    <label class="ds-si-step-label">Grant Order</label>
+    <select class="ds-si-select" [(ngModel)]="selectedSubChildSubType" (ngModelChange)="onSubChildSubTypeChange()">
+      <option value="" disabled>— Select grant order —</option>
+      @for (group of groupedSubChildSubTypes; track group.group) {
+        <optgroup [label]="group.group">
+          @for (item of group.items; track item.code) {
+          <option [value]="item.code">{{ item.label }}</option>
+          }
+        </optgroup>
+      }
+    </select>
+  </div>
+  }
+
+  <!-- ── Step 5: District filter ───────────────────────────── -->
   @if (selectedSubType && needsDistrict()) {
   <div class="ds-si-row ds-si-animate">
     <label class="ds-si-step-label">District</label>
@@ -66,14 +83,14 @@
 
       <option value="" disabled>— Select district —</option>
 
-      @for (d of districts; track d.code) {
+      @for (d of availableDistricts; track d.code) {
       <option [value]="d.code">{{ d.name }}</option>
       }
     </select>
   </div>
   }
 
-  <!-- ── Step 4: Institution autocomplete ──────────────────────────────── -->
+  <!-- ── Step 6: Institution autocomplete ──────────────────────────────── -->
   @if (showInstitutionDropdown) {
   <div class="ds-si-row ds-si-animate">
     <label class="ds-si-step-label">Institution</label>
@@ -118,6 +135,12 @@
     <span class="ds-si-sep">›</span>
     <span class="ds-si-crumb">
       {{ childSubTypes | dsFind: 'code' : selectedChildSubType : 'label' }}
+    </span>
+    }
+    @if (selectedSubChildSubType) {
+    <span class="ds-si-sep">›</span>
+    <span class="ds-si-crumb">
+      {{ subChildSubTypes | dsFind: 'code' : selectedSubChildSubType : 'label' }}
     </span>
     }
   </div>

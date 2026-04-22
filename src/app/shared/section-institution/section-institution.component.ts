@@ -96,9 +96,19 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   selectedChildSubType: string = '';
   childSubTypes: SubType[] = [];
+  selectedSubChildSubType: string = '';
+  subChildSubTypes: SubType[] = [];
 
   // ── Base API URL — update this to match your DSpace REST base URL ──────────
   private readonly API = `${CURRENT_API_URL}/api/hed`;
+
+  readonly RDE_DISTRICT_MAP: { [key: string]: string[] } = {
+    'RDE_BBS': ['ANGUL', 'CUTTACK', 'DHENKANAL', 'JAJPUR', 'KHURDA', 'NAYAGARH', 'PURI', 'JAGATSINGHPUR', 'KENDRAPARA'],
+    'RDE_BAL': ['BALASORE', 'KEONJHAR', 'MAYURBHANJ', 'BHADRAK'],
+    'RDE_BER': ['BOUDH', 'GAJAPATI', 'GANJAM', 'KANDHAMAL'],
+    'RDE_SBP': ['BARGARH', 'BALANGIR', 'DEOGARH', 'KALAHANDI', 'NUAPADA', 'SAMBALPUR', 'SUBARNAPUR', 'SUNDARGARH', 'JHARSUGUDA'],
+    'RDE_JEY': ['KORAPUT', 'MALKANGIRI', 'NABARANGPUR', 'RAYAGADA']
+  };
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
@@ -154,6 +164,18 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
       });
   }
 
+  get availableDistricts(): District[] {
+    const type = this.selectedSubChildSubType || this.selectedChildSubType || this.selectedSubType;
+    if (type && type.startsWith('RDE_')) {
+      const rdeCode = Object.keys(this.RDE_DISTRICT_MAP).find(k => type.startsWith(k));
+      if (rdeCode) {
+        const allowed = this.RDE_DISTRICT_MAP[rdeCode];
+        return this.districts.filter(d => allowed.includes(d.code));
+      }
+    }
+    return this.districts;
+  }
+
   loadSubTypes(branchCode: string): void {
     this.isLoadingSubTypes = true;
     this.http.get<SubType[]>(`${this.API}/subtypes`, { params: { branch: branchCode } })
@@ -171,7 +193,7 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
   loadInstitutions(): void {
     if (!this.selectedSubType) { return; }
     this.isLoadingInstitutions = true;
-    const subTypeToUse = this.selectedChildSubType || this.selectedSubType;
+    const subTypeToUse = this.selectedSubChildSubType || this.selectedChildSubType || this.selectedSubType;
 
     const params: any = { sub_type: subTypeToUse };
     if (this.selectedDistrict) { params.district = this.selectedDistrict; }
@@ -193,11 +215,37 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
   onChildSubTypeChange(): void {
     this.selectedDistrict = '';
     this.selectedInstitution = '';
+    this.selectedSubChildSubType = '';
+    this.searchQuery = '';
+    this.institutions = [];
+    this.subChildSubTypes = [];
+
+    const subType = this.childSubTypes.find(s => s.code === this.selectedChildSubType);
+
+    if (subType?.has_children) {
+      this.loadSubChildSubTypes();
+      this.showInstitutionDropdown = false;
+      return;
+    }
+
+    this.showInstitutionDropdown = this.needsInstitutionDropdown();
+    if (this.showInstitutionDropdown) {
+      this.loadInstitutions(); 
+    }
+
+    this.emitValue();
+  }
+
+  onSubChildSubTypeChange(): void {
+    this.selectedDistrict = '';
+    this.selectedInstitution = '';
     this.searchQuery = '';
     this.institutions = [];
 
-    this.showInstitutionDropdown = true;
-    this.loadInstitutions(); // now based on child subtype
+    this.showInstitutionDropdown = this.needsInstitutionDropdown();
+    if (this.showInstitutionDropdown) {
+      this.loadInstitutions(); 
+    }
 
     this.emitValue();
   }
@@ -207,7 +255,7 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
       debounceTime(300),
       distinctUntilChanged(),
       switchMap((query) => {
-        const subTypeToUse = this.selectedChildSubType || this.selectedSubType;
+        const subTypeToUse = this.selectedSubChildSubType || this.selectedChildSubType || this.selectedSubType;
         const params: any = { sub_type: subTypeToUse, q: query }; if (this.selectedDistrict) { params.district = this.selectedDistrict; }
         return this.http.get<Institution[]>(`${this.API}/institutions`, { params });
       }),
@@ -228,15 +276,29 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
     return Object.keys(groups).map(g => ({ group: g, items: groups[g] }));
   }
 
+  get groupedSubChildSubTypes(): { group: string; items: SubType[] }[] {
+    const groups: { [key: string]: SubType[] } = {};
+    this.subChildSubTypes.forEach(st => {
+      const g = st.group_name || 'General';
+      if (!groups[g]) groups[g] = [];
+      groups[g].push(st);
+    });
+    return Object.keys(groups).map(g => ({ group: g, items: groups[g] }));
+  }
+
   // ── Event handlers ─────────────────────────────────────────────────────────
 
   onBranchChange(): void {
     // Reset downstream
     this.selectedSubType = '';
+    this.selectedChildSubType = '';
+    this.selectedSubChildSubType = '';
     this.selectedDistrict = '';
     this.selectedInstitution = '';
     this.searchQuery = '';
     this.subTypes = [];
+    this.childSubTypes = [];
+    this.subChildSubTypes = [];
     this.institutions = [];
     this.filteredInstitutions = [];
     this.showInstitutionDropdown = false;
@@ -251,7 +313,10 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
     this.selectedDistrict = '';
     this.selectedInstitution = '';
     this.selectedChildSubType = '';
+    this.selectedSubChildSubType = '';
     this.searchQuery = '';
+    this.childSubTypes = [];
+    this.subChildSubTypes = [];
     this.institutions = [];
     this.filteredInstitutions = [];
 
@@ -265,15 +330,12 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // existing logic
-    const hasInstitutionList = ['GC', 'NGC_488', 'NGC_662', 'SC', 'PVT', 'SPU', 'PU']
-      .includes(this.selectedSubType);
-
-    this.showInstitutionDropdown = hasInstitutionList;
-
-    if (hasInstitutionList) {
+    // evaluate if we should show institutions for direct selections
+    this.showInstitutionDropdown = this.needsInstitutionDropdown();
+    if (this.showInstitutionDropdown) {
       this.loadInstitutions();
     }
+
 
     this.emitValue();
   }
@@ -285,6 +347,20 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.childSubTypes = data;
+          this.cdr.detectChanges();
+        },
+        error: () => { }
+      });
+  }
+
+  loadSubChildSubTypes(): void {
+    this.http.get<SubType[]>(`${this.API}/subtypes`, {
+      params: { parent: this.selectedChildSubType }
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.subChildSubTypes = data;
           this.cdr.detectChanges();
         },
         error: () => { }
@@ -320,14 +396,21 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
   emitValue(): void {
     const branch = this.branches.find(b => b.code === this.selectedBranch);
     const subType = this.subTypes.find(s => s.code === this.selectedSubType);
+    const childSubType = this.childSubTypes.find(s => s.code === this.selectedChildSubType);
+    const subChildSubType = this.subChildSubTypes.find(s => s.code === this.selectedSubChildSubType);
     const institution = this.institutions.find(i => i.code === this.selectedInstitution);
 
     if (!branch || !subType) { return; }
 
+    const deepestSubType = subChildSubType || childSubType || subType;
+
     // storedValue format: "branch::subtype::institutionCode"
     // displayValue: human readable for the form label
     const parts = [branch.label, subType.label];
-    const stored = [branch.code, subType.code];
+    if (childSubType) parts.push(childSubType.label);
+    if (subChildSubType) parts.push(subChildSubType.label);
+    
+    const stored = [branch.code, deepestSubType.code];
 
     if (institution) {
       parts.push(institution.name);
@@ -337,8 +420,8 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
     const value: SectionInstitutionValue = {
       branch: branch.code,
       branchLabel: branch.label,
-      subType: subType.code,
-      subTypeLabel: subType.label,
+      subType: deepestSubType.code,
+      subTypeLabel: deepestSubType.label,
       institution: institution?.code,
       institutionLabel: institution?.name,
       district: this.selectedDistrict || undefined,
@@ -362,7 +445,19 @@ export class SectionInstitutionComponent implements OnInit, OnDestroy {
   }
 
   needsDistrict(): boolean {
-    const type = this.selectedChildSubType || this.selectedSubType;
-    return ['GC', 'NGC_488', 'NGC_662', 'SC', 'PVT'].includes(type);
+    const type = this.selectedSubChildSubType || this.selectedChildSubType || this.selectedSubType;
+    if (!type) return false;
+    return type.endsWith('GC') || type.endsWith('NGC') || type.endsWith('NGC_488') || type.endsWith('NGC_662') || type.endsWith('SC') || type.endsWith('PVT');
+  }
+
+  needsInstitutionDropdown(): boolean {
+    const type = this.selectedSubChildSubType || this.selectedChildSubType || this.selectedSubType;
+    if (!type) return false;
+    
+    // According to the flowchart and business rules, only these specific items have institution lists
+    const hasInstitutions = ['GC', 'NGC', 'NGC_488', 'NGC_662', 'SC', 'PVT', 'SPU', 'PU'];
+    
+    // Check exact matches or dynamically generated RDE suffix matches
+    return hasInstitutions.some(code => type === code || type.endsWith('_' + code));
   }
 }
